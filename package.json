@@ -2,7 +2,7 @@
   "name": "myapp",
   "version": "0.0.1",
   "description": "A Quasar Framework app",
-  "productName": "Quasar App",
+  "productName": "Account app",
   "author": "Jason <gt07891@greattree.com.tw>",
   "private": true,
   "scripts": {
