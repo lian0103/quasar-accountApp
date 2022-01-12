@@ -1,12 +1,35 @@
 <script setup>
-import { ref } from "vue";
+import { ref, computed } from "vue";
 import { useQuasar } from "quasar";
+import { useUserStore } from "../stores/userInfo";
+import { fiebaseSignOut } from "../firebase/auth";
+import { useRouter } from "vue-router";
+
+const $router = useRouter();
+
+const userStore = useUserStore();
 
 const quasar = useQuasar();
 const isDark = ref(quasar.dark.isActive);
 const toggle = () => {
   quasar.dark.toggle();
   isDark.value = quasar.dark.isActive;
+};
+
+const handleSignInOut = () => {
+  if (userStore.userInfo) {
+    fiebaseSignOut()
+      .then((res) => {
+        userStore.userInfo = null;
+        userStore.pageTab = "login";
+        $router.push({ path: "/signup" });
+      })
+      .catch((err) => {});
+  }
+  if (!userStore.userInfo) {
+    userStore.pageTab = "login";
+    $router.push({ path: "/signup" });
+  }
 };
 </script>
 
@@ -27,13 +50,18 @@ const toggle = () => {
           :style="isDark ? 'color: #ccc !important;' : 'color: #fff;'"
           @click="toggle"
         />
-        <q-btn class="mx-2" label="Login" @click="() => {}" color="secondary" />
+        <q-btn
+          class="mx-2"
+          :label="userStore.userInfo ? 'SignOut' : 'Login'"
+          @click="handleSignInOut"
+          color="secondary"
+        />
         <div class="px-2">v0.0.1</div>
       </q-toolbar>
     </q-header>
 
     <q-page-container>
-      <q-tabs>
+      <q-tabs v-if="userStore.userInfo">
         <q-route-tab class="w-1/2" icon="fas fa-dollar-sign" to="/edit" exact />
         <q-route-tab class="w-1/2" icon="fas fa-info-circle" to="/info" exact />
       </q-tabs>

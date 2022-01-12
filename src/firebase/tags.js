@@ -3,12 +3,18 @@ import app from "./index";
 
 const db = getDatabase(app);
 
-export const tagsRef = ref(db, "docs");
+export const getMemberTagsRef = (uid) => {
+  if (!uid) return false;
 
-export function setTag(tags=[],memberId='123') {
+  return ref(db, `tags/${uid}`);
+};
+
+export function setTag(tags = [], uid) {
+  if (!uid) return false;
+
   const timeId = new Date().valueOf();
-  set(ref(db, `docs/${memberId}`), {
-    tags: tags,
+  set(ref(db, `tags/${uid}`), {
+    data: tags,
     time: timeId,
   });
 }
