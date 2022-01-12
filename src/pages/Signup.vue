@@ -5,7 +5,7 @@ import { useUserStore } from "../stores/userInfo";
 import { useRouter } from "vue-router";
 import { getMemberTagsRef } from "../firebase/tags";
 import { getMemberSpendRef } from "../firebase/spend";
-import { onValue , orderByChild , query } from "firebase/database";
+import { onValue } from "firebase/database";
 
 const userStore = useUserStore();
 const $router = useRouter();
@@ -40,13 +40,15 @@ const handleLogin = () => {
         userStore.tagsArr = data?.data || [];
       });
 
-      const firebaseSpendRef = query(getMemberSpendRef(res.uid), orderByChild('date')) ;
+      const firebaseSpendRef = getMemberSpendRef(res.uid);
+
       onValue(firebaseSpendRef, (snapshot) => {
-        const data = Object.values(snapshot.val()).sort((a, b) => {
-          return parseInt(a.time) - parseInt(b.time);
+        const data = snapshot.val() || {};
+        let arr = Object.keys(data).map((key) => {
+          return { ...data[key], rowKey: key };
         });
-        console.log(data);
-        userStore.spendList = data || [];
+        console.log(arr);
+        userStore.spendList = [...arr].reverse() || [];
       });
 
       $router.push({ path: "/info" });

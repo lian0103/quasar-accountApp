@@ -1,4 +1,4 @@
-import { getDatabase, ref, set, push  } from "firebase/database";
+import { getDatabase, ref, set, push, remove } from "firebase/database";
 import app from "./index";
 
 const db = getDatabase(app);
@@ -18,6 +18,12 @@ export function pushSpend(obj = {}, uid) {
     ...obj,
     time: timeId,
   });
+}
+
+export function removeSpend(uid, key) {
+  if (!uid || !key) return false;
+
+  remove(ref(db, `spend/${uid}/${key}`));
 }
 
 export default {};

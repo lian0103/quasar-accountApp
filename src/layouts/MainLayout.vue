@@ -22,6 +22,8 @@ const handleSignInOut = () => {
       .then((res) => {
         userStore.userInfo = null;
         userStore.pageTab = "login";
+        userStore.tagsArr = [];
+        userStore.spendList = [];
         $router.push({ path: "/signup" });
       })
       .catch((err) => {});

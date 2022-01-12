@@ -5,7 +5,6 @@ import Tags from "./Tags.vue";
 import Spend from "./Spend.vue";
 
 const tab = ref("spend");
-
 </script>
 
 <template>
@@ -22,20 +21,19 @@ const tab = ref("spend");
           narrow-indicator
         >
           <q-tab name="statics" label="Statics" />
-          <q-tab name="tag" label="Tag" />
           <q-tab name="spend" label="Spend" />
+          <q-tab name="tag" label="Tag" />
         </q-tabs>
 
         <q-tab-panels v-model="tab" animated>
           <q-tab-panel name="statics">
-              <Statics />
-          </q-tab-panel>
-
-          <q-tab-panel name="tag">
-              <Tags />
+            <Statics />
           </q-tab-panel>
           <q-tab-panel name="spend">
-              <Spend />
+            <Spend />
+          </q-tab-panel>
+          <q-tab-panel name="tag">
+            <Tags />
           </q-tab-panel>
         </q-tab-panels>
       </div>

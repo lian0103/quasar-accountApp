@@ -1,8 +1,8 @@
 <script setup>
 import { reactive } from "vue";
-import { date } from "quasar";
+import { date, useQuasar } from "quasar";
 import { useUserStore } from "../../stores/userInfo";
-import { pushSpend } from "../../firebase/spend";
+import { pushSpend, removeSpend } from "../../firebase/spend";
 
 const userStore = useUserStore();
 const uid = userStore.userInfo.uid;
@@ -43,13 +43,29 @@ const timeStamp = Date.now();
 const dateStr = date.formatDate(timeStamp, "YYYY-MM-DD");
 const formSpend = reactive({
   date: dateStr,
-  spend: 1,
-  tag: "",
+  spend: 0,
+  tag: userStore.tagsArr[0],
   memo: "",
 });
 
 const handleAddSpend = () => {
   pushSpend({ ...formSpend }, uid);
+  formSpend.spend = 1;
+  formSpend.memo = "";
+};
+
+const $q = useQuasar();
+
+const handleRowclick = (evt, row, index) => {
+  console.log("in", evt, row, index);
+  console.log(row.rowKey);
+  $q.dialog({
+    title: "DELETE",
+    message: `刪除這筆${row.spend}元的話費嗎?`,
+    cancel: true,
+  }).onOk(() => {
+    removeSpend(uid, row.rowKey);
+  });
 };
 
 const handleRules = (target) => {
@@ -131,7 +147,8 @@ const handleRules = (target) => {
       dense
       :rows="userStore.spendList || []"
       :columns="table.columns"
-      row-key="name"
+      row-key="rowKey"
+      @row-click="handleRowclick"
     />
   </div>
 </template>
