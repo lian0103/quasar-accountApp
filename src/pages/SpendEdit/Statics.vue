@@ -117,10 +117,29 @@ const chartOptionsBarTotal = {
     },
   },
   dataLabels: {
-    enabled: false,
+    enabled: true,
+    style: {
+      fontSize: "11px",
+      fontFamily: "Helvetica, Arial, sans-serif",
+      fontWeight: "normal",
+      colors: [
+        function (opts) {
+          return "#444";
+        },
+      ],
+    },
   },
   xaxis: {
     categories: tagsArr,
+    labels: {
+      style: {
+        colors: tagsArr.map((i) => "000"),
+        fontSize: "14px",
+        fontFamily: "Helvetica, Arial, sans-serif",
+        fontWeight: 400,
+        cssClass: "apexcharts-xaxis-label",
+      },
+    },
   },
 };
 
@@ -157,7 +176,9 @@ const seriesBarTotal = [
     </div>
 
     <div class="w-full md:w-1/2 md:mx-auto my-4">
-      <h2 class="text-2xl py-2">全{{spendList.length}}筆 總消費{{ total }}元</h2>
+      <h2 class="text-2xl py-2">
+        全{{ spendList.length }}筆 總消費{{ total }}元
+      </h2>
       <p>{{ totalStr }}</p>
       <div class="overflow-y-scroll md:overflow-hidden">
         <apexchart
@@ -183,7 +204,7 @@ const seriesBarTotal = [
 </template>
 
 <style>
-.vue-apexcharts{
+.vue-apexcharts {
   display: flex;
   justify-content: center;
 }

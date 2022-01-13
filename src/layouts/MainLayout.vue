@@ -10,11 +10,13 @@ const $router = useRouter();
 const userStore = useUserStore();
 
 const quasar = useQuasar();
-const isDark = ref(quasar.dark.isActive);
+const isDark = ref(true);
 const toggle = () => {
   quasar.dark.toggle();
   isDark.value = quasar.dark.isActive;
 };
+
+quasar.dark.set(true)
 
 const handleSignInOut = () => {
   if (userStore.userInfo) {
@@ -63,7 +65,7 @@ const handleSignInOut = () => {
     </q-header>
 
     <q-page-container>
-      <q-tabs v-if="userStore.userInfo">
+      <q-tabs v-if="userStore.userInfo" :class="isDark ? 'text-white':'text-dark'">
         <q-route-tab class="w-1/2" icon="fas fa-dollar-sign" to="/edit" exact />
         <q-route-tab class="w-1/2" icon="fas fa-info-circle" to="/info" exact />
       </q-tabs>

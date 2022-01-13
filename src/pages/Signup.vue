@@ -51,7 +51,7 @@ const handleLogin = () => {
         userStore.spendList = [...arr].reverse() || [];
       });
 
-      $router.push({ path: "/info" });
+      $router.push({ path: "/edit" });
     })
     .catch((err) => {
       errMsg1.value = "帳密錯誤";

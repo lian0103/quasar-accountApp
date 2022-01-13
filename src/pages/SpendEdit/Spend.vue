@@ -61,7 +61,7 @@ const handleRowclick = (evt, row, index) => {
   console.log(row.rowKey);
   $q.dialog({
     title: "DELETE",
-    message: `刪除這筆${row.spend}元的話費嗎?`,
+    message: `刪除這筆${row.spend}元的花費嗎?`,
     cancel: true,
   }).onOk(() => {
     removeSpend(uid, row.rowKey);
