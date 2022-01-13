@@ -34,6 +34,9 @@ const handleLogin = () => {
     .then((res) => {
       errMsg1.value = null;
       userStore.userInfo = res;
+
+      localStorage.setItem("userInfo", JSON.stringify(res));
+
       const firebaseTagsRef = getMemberTagsRef(res.uid);
       onValue(firebaseTagsRef, (snapshot) => {
         const data = snapshot.val();
@@ -157,9 +160,7 @@ const handleSignup = () => {
                 label="Password"
                 type="password"
                 clearable
-                :rules="[
-                  (val) => !!val || '必填',
-                ]"
+                :rules="[(val) => !!val || '必填']"
               />
 
               <q-input

@@ -6,8 +6,11 @@ import { fiebaseSignOut } from "../firebase/auth";
 import { useRouter } from "vue-router";
 
 const $router = useRouter();
-
 const userStore = useUserStore();
+
+if (userStore.userInfo) {
+  $router.push({ path: "/edit" });
+}
 
 const quasar = useQuasar();
 const isDark = ref(false);
@@ -23,6 +26,7 @@ const handleSignInOut = () => {
         userStore.pageTab = "login";
         userStore.tagsArr = [];
         userStore.spendList = [];
+        localStorage.setItem("userInfo", null);
         $router.push({ path: "/signup" });
       })
       .catch((err) => {});
@@ -62,7 +66,10 @@ const handleSignInOut = () => {
     </q-header>
 
     <q-page-container>
-      <q-tabs v-if="userStore.userInfo" :class="isDark ? 'text-white':'text-dark'">
+      <q-tabs
+        v-if="userStore.userInfo"
+        :class="isDark ? 'text-white' : 'text-dark'"
+      >
         <q-route-tab class="w-1/2" icon="fas fa-dollar-sign" to="/edit" exact />
         <q-route-tab class="w-1/2" icon="fas fa-info-circle" to="/info" exact />
       </q-tabs>
