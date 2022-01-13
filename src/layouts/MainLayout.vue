@@ -10,14 +10,11 @@ const $router = useRouter();
 const userStore = useUserStore();
 
 const quasar = useQuasar();
-const isDark = ref(true);
+const isDark = ref(false);
 const toggle = () => {
   quasar.dark.toggle();
   isDark.value = quasar.dark.isActive;
 };
-
-quasar.dark.set(true)
-
 const handleSignInOut = () => {
   if (userStore.userInfo) {
     fiebaseSignOut()
@@ -46,14 +43,14 @@ const handleSignInOut = () => {
           SPENDING
         </q-toolbar-title>
 
-        <q-btn
+        <!-- <q-btn
           round
           size="10px"
           :color="isDark ? 'white' : 'blue-grey-10'"
           :icon="isDark ? 'lightbulb_outline' : 'lightbulb'"
           :style="isDark ? 'color: #ccc !important;' : 'color: #fff;'"
           @click="toggle"
-        />
+        /> -->
         <q-btn
           class="mx-2"
           :label="userStore.userInfo ? 'SignOut' : 'Login'"
