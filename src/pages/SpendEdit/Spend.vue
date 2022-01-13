@@ -57,8 +57,8 @@ const handleAddSpend = () => {
 const $q = useQuasar();
 
 const handleRowclick = (evt, row, index) => {
-  console.log("in", evt, row, index);
-  console.log(row.rowKey);
+  // console.log("in", evt, row, index);
+  // console.log(row.rowKey);
   $q.dialog({
     title: "DELETE",
     message: `刪除這筆${row.spend}元的花費嗎?`,
