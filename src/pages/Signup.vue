@@ -71,7 +71,7 @@ const handleSignup = () => {
       $router.push({ path: "/info" });
     })
     .catch((err) => {
-      errMsg2.value = "帳號已被註冊";
+      errMsg2.value = err;
     });
 };
 </script>
