@@ -2,8 +2,7 @@
 import { reactive } from "vue";
 import { useQuasar } from "quasar";
 import { useUserStore } from "../../stores/userInfo";
-import { getMemberTagsRef, setTag } from "../../firebase/tags";
-import { onValue } from "firebase/database";
+import { setTag } from "../../firebase/tags";
 
 const userStore = useUserStore();
 const uid = userStore.userInfo.uid;
@@ -46,7 +45,7 @@ const handleAddTag = () => {
 
 <template>
   <div class="w-full md:w-1/2 md:mx-auto">
-    <h2 class="text-2xl py-2">TAGS</h2>
+    <h2 class="text-2xl py-2">分類標籤</h2>
     <div class="py-2 text-left">
       <q-chip dense v-for="item in userStore.tagsArr">
         <div

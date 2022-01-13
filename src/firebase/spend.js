@@ -17,6 +17,7 @@ export function pushSpend(obj = {}, uid) {
   set(newPostRef, {
     ...obj,
     time: timeId,
+    tag:!!obj.tag?obj.tag:"無tag"
   });
 }
 

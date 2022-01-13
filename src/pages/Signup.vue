@@ -11,14 +11,14 @@ const userStore = useUserStore();
 const $router = useRouter();
 
 const formLogin = reactive({
-  email: "k1319900103@gmai.com",
-  psw: "123456",
+  email: "k1319900103@gmail.com",
+  psw: "",
 });
 
 const formSignup = reactive({
-  email: "k1319900103@gmai.com",
-  psw1: "123456",
-  psw2: "123456",
+  email: "",
+  psw1: "",
+  psw2: "",
 });
 
 const errMsg1 = ref(null);
@@ -159,7 +159,6 @@ const handleSignup = () => {
                 clearable
                 :rules="[
                   (val) => !!val || '必填',
-                  (val) => val.length >= 6 || '密碼長度6-12位',
                 ]"
               />
 

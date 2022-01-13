@@ -80,7 +80,7 @@ const handleRules = (target) => {
 
 <template>
   <div class="w-full md:w-1/2 md:mx-auto">
-    <h2 class="text-2xl py-2">SPEND</h2>
+    <h2 class="text-2xl py-2">紀錄花費</h2>
     <q-form
       @submit="handleAddSpend"
       class="q-gutter-md flex justify-around mx-auto"

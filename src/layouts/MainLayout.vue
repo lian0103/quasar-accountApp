@@ -58,7 +58,7 @@ const handleSignInOut = () => {
           @click="handleSignInOut"
           color="secondary"
         />
-        <div class="px-2">v0.0.1</div>
+        <div class="px-2">v0.0.2</div>
       </q-toolbar>
     </q-header>
 
