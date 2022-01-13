@@ -3,9 +3,6 @@ import { reactive, ref } from "vue";
 import { createUser, firebaseSignIn } from "../firebase/auth";
 import { useUserStore } from "../stores/userInfo";
 import { useRouter } from "vue-router";
-import { getMemberTagsRef } from "../firebase/tags";
-import { getMemberSpendRef } from "../firebase/spend";
-import { onValue } from "firebase/database";
 
 const userStore = useUserStore();
 const $router = useRouter();
@@ -37,22 +34,7 @@ const handleLogin = () => {
 
       localStorage.setItem("userInfo", JSON.stringify(res));
 
-      const firebaseTagsRef = getMemberTagsRef(res.uid);
-      onValue(firebaseTagsRef, (snapshot) => {
-        const data = snapshot.val();
-        userStore.tagsArr = data?.data || [];
-      });
-
-      const firebaseSpendRef = getMemberSpendRef(res.uid);
-
-      onValue(firebaseSpendRef, (snapshot) => {
-        const data = snapshot.val() || {};
-        let arr = Object.keys(data).map((key) => {
-          return { ...data[key], rowKey: key };
-        });
-        console.log(arr);
-        userStore.spendList = [...arr].reverse() || [];
-      });
+      userStore.subscribeFirebaseRealtimeDB(res.uid);
 
       $router.push({ path: "/edit" });
     })

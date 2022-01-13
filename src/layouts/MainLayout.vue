@@ -9,6 +9,7 @@ const $router = useRouter();
 const userStore = useUserStore();
 
 if (userStore.userInfo) {
+  userStore.subscribeFirebaseRealtimeDB();
   $router.push({ path: "/edit" });
 }
 
