@@ -1,4 +1,4 @@
-import { getDatabase, ref, set, push, remove } from "firebase/database";
+import { getDatabase, ref, set, push, remove, update } from "firebase/database";
 import app from "./index";
 
 const db = getDatabase(app);
@@ -9,6 +9,11 @@ export const getMemberSpendRef = (uid) => {
   return ref(db, `spend/${uid}`);
 };
 
+export function setSpendList(newList, uid) {
+  if (!uid) return false;
+  set(ref(db, `spend/${uid}`), newList);
+}
+
 export function pushSpend(obj = {}, uid) {
   if (!uid) return false;
 
@@ -17,8 +22,14 @@ export function pushSpend(obj = {}, uid) {
   set(newPostRef, {
     ...obj,
     time: timeId,
-    tag:!!obj.tag?obj.tag:"無tag"
+    tag: !!obj.tag ? obj.tag : "無tag",
   });
+}
+
+export function updateSpend(uid, key, data) {
+  if (!uid || !key) return false;
+  console.log("in????");
+  update(ref(db, `spend/${uid}/${key}`), data);
 }
 
 export function removeSpend(uid, key) {

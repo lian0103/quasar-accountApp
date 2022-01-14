@@ -21,7 +21,7 @@ export const useUserStore = defineStore({
   actions: {
     subscribeFirebaseRealtimeDB(uid = null) {
       uid = uid ? uid : this.userInfo.uid;
-      console.log(uid);
+      // console.log(uid);
 
       const firebaseTagsRef = getMemberTagsRef(uid);
       onValue(firebaseTagsRef, (snapshot) => {

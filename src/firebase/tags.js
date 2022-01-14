@@ -9,12 +9,12 @@ export const getMemberTagsRef = (uid) => {
   return ref(db, `tags/${uid}`);
 };
 
-export function setTag(tags = [], uid) {
+export function setTag(newTags = [], uid) {
   if (!uid) return false;
 
   const timeId = new Date().valueOf();
   set(ref(db, `tags/${uid}`), {
-    data: tags,
+    data: newTags,
     time: timeId,
   });
 }

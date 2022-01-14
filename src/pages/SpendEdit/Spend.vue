@@ -1,8 +1,10 @@
 <script setup>
-import { reactive } from "vue";
+import { reactive, ref } from "vue";
 import { date, useQuasar } from "quasar";
 import { useUserStore } from "../../stores/userInfo";
-import { pushSpend, removeSpend } from "../../firebase/spend";
+import { pushSpend, removeSpend, updateSpend } from "../../firebase/spend";
+
+const gridMode = ref(false);
 
 const userStore = useUserStore();
 const uid = userStore.userInfo.uid;
@@ -48,23 +50,45 @@ const formSpend = reactive({
   memo: "",
 });
 
+const formSpendEdit = ref({
+  date: "",
+  spend: 0,
+  tag: "",
+  memo: "",
+});
+
 const handleAddSpend = () => {
   pushSpend({ ...formSpend }, uid);
   formSpend.spend = 1;
   formSpend.memo = "";
 };
 
+const dialog = ref(false);
+
 const $q = useQuasar();
 
 const handleRowclick = (evt, row, index) => {
   // console.log("in", evt, row, index);
   // console.log(row.rowKey);
+  formSpendEdit.value = { ...row };
+  dialog.value = true;
+};
+
+const handleSpendSave = () => {
+  let row = formSpendEdit.value;
+  updateSpend(uid, row.rowKey, row);
+  dialog.value = false;
+};
+
+const handleSpendDelete = () => {
+  let row = formSpendEdit.value;
   $q.dialog({
     title: "DELETE",
     message: `刪除這筆${row.spend}元的花費嗎?`,
     cancel: true,
   }).onOk(() => {
     removeSpend(uid, row.rowKey);
+    dialog.value = false;
   });
 };
 
@@ -142,13 +166,95 @@ const handleRules = (target) => {
       </div>
     </q-form>
     <br />
+
+    <div class="w-full px-2 text-right">
+      <q-toggle v-model="gridMode" label="On Grid" />
+    </div>
     <q-table
+      :grid="gridMode"
       title="花費列表"
       dense
       :rows="userStore.spendList || []"
       :columns="table.columns"
       row-key="rowKey"
       @row-click="handleRowclick"
+      rows-per-page-label="每頁筆數"
+      :pagination="{
+        rowsPerPage: 10,
+      }"
     />
+
+    <q-dialog v-model="dialog">
+      <q-card style="width: 700px; max-width: 80vw">
+        <q-card-section>
+          <div class="text-h6">Edit</div>
+        </q-card-section>
+
+        <q-card-section class="q-pt-none">
+          <q-form
+            @submit="handleSpendSave"
+            class="q-gutter-md flex justify-around mx-auto"
+          >
+            <div class="left w-full">
+              <q-input filled v-model="formSpendEdit.date">
+                <template v-slot:append>
+                  <q-icon name="event" class="cursor-pointer">
+                    <q-popup-proxy
+                      cover
+                      transition-show="scale"
+                      transition-hide="scale"
+                    >
+                      <q-date v-model="formSpendEdit.date" mask="YYYY-MM-DD">
+                        <div class="row items-center justify-end">
+                          <q-btn
+                            v-close-popup
+                            label="Close"
+                            color="primary"
+                            flat
+                          />
+                        </div>
+                      </q-date>
+                    </q-popup-proxy>
+                  </q-icon>
+                </template>
+              </q-input>
+
+              <q-input
+                maxlength="50000"
+                prefix="$"
+                type="number"
+                v-model.number="formSpendEdit.spend"
+                label="money"
+                clearable
+                :rules="[handleRules('spend')]"
+              />
+
+              <q-select
+                v-model="formSpendEdit.tag"
+                :options="userStore.tagsArr"
+                behavior="menu"
+                label="Tag"
+                :rules="[handleRules('tag')]"
+              />
+
+              <q-input
+                maxlength="20"
+                v-model.number="formSpendEdit.memo"
+                label="Memo"
+                clearable
+              />
+            </div>
+            <div class="w-full flex justify-between">
+              <q-btn
+                color="negative"
+                label="Delete"
+                @click="handleSpendDelete"
+              />
+              <q-btn label="Save" type="submit" />
+            </div>
+          </q-form>
+        </q-card-section>
+      </q-card>
+    </q-dialog>
   </div>
 </template>
