@@ -29,7 +29,7 @@ const handleTagEdit = (item) => {
 };
 
 const handleTagSave = () => {
-  if (formEdit.value.edit != formEdit.value.preEdit) {
+  if (!!formEdit.value.edi && formEdit.value.edit != formEdit.value.preEdit) {
     let newArr = [...Object.values(userStore.tagsArr)].map((str) => {
       if (str == formEdit.value.preEdit) {
         return formEdit.value.edit;
@@ -76,9 +76,6 @@ const handleTagDelete = () => {
 
 const handleRules = (target) => {
   switch (target) {
-    case "tag": {
-      return (val) => !!val || "tag不為空";
-    }
     case "tags": {
       return (val) =>
         (!userStore.tagsArr.includes(val) && userStore.tagsArr.length <= 10) ||
@@ -88,6 +85,7 @@ const handleRules = (target) => {
 };
 
 const handleAddTag = () => {
+  if (!formTags.add) return false;
   setTag([...userStore.tagsArr, formTags.add], uid);
   formTags.add = "";
 };
@@ -120,7 +118,7 @@ const handleAddTag = () => {
           maxlength="8"
           v-model="formTags.add"
           label="Tags"
-          :rules="[handleRules('tag'), handleRules('tags')]"
+          :rules="[handleRules('tags')]"
         />
       </div>
 
@@ -152,7 +150,7 @@ const handleAddTag = () => {
                 maxlength="8"
                 v-model="formEdit.edit"
                 label="Tags"
-                :rules="[handleRules('tag'), handleRules('tags')]"
+                :rules="[handleRules('tags')]"
               />
             </div>
             <div class="w-full flex justify-between">

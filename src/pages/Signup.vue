@@ -8,7 +8,7 @@ const userStore = useUserStore();
 const $router = useRouter();
 
 const formLogin = reactive({
-  email: "k1319900103@gmail.com",
+  email: "",
   psw: "",
 });
 
@@ -53,6 +53,7 @@ const handleSignup = () => {
       errMsg2.value = null;
 
       userStore.userInfo = res;
+      userStore.subscribeFirebaseRealtimeDB(res.uid);
       $router.push({ path: "/info" });
     })
     .catch((err) => {
