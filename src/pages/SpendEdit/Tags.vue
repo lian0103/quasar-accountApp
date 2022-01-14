@@ -29,7 +29,7 @@ const handleTagEdit = (item) => {
 };
 
 const handleTagSave = () => {
-  if (!!formEdit.value.edi && formEdit.value.edit != formEdit.value.preEdit) {
+  if (!!formEdit.value.edit && formEdit.value.edit != formEdit.value.preEdit) {
     let newArr = [...Object.values(userStore.tagsArr)].map((str) => {
       if (str == formEdit.value.preEdit) {
         return formEdit.value.edit;
