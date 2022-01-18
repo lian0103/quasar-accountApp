@@ -1,6 +1,6 @@
 <script setup>
 import { reactive, ref } from "vue";
-import { createUser, firebaseSignIn } from "../firebase/auth";
+import { createUser, firebaseSignIn, loginWithGoogle } from "../firebase/auth";
 import { useUserStore } from "../stores/userInfo";
 import { useRouter } from "vue-router";
 
@@ -60,6 +60,16 @@ const handleSignup = () => {
       errMsg2.value = err;
     });
 };
+
+const handleGoogle = () => {
+  // console.log("IN handleGoogle");
+  loginWithGoogle().then((res) => {
+    userStore.userInfo = res;
+    localStorage.setItem("userInfo", JSON.stringify(res));
+    userStore.subscribeFirebaseRealtimeDB(res.uid);
+    $router.push({ path: "/edit" });
+  });
+};
 </script>
 
 <template>
@@ -93,6 +103,7 @@ const handleSignup = () => {
                   (val) => !!val || '必填',
                   (val) => emailRule.test(val) || 'email格式有誤',
                 ]"
+                lazy-rules
               />
 
               <q-input
@@ -102,6 +113,7 @@ const handleSignup = () => {
                 type="password"
                 clearable
                 :rules="[(val) => !!val || '必填']"
+                lazy-rules
               />
 
               <p v-if="errMsg1" class="text-red-600 absolute left-0 bottom-0">
@@ -135,6 +147,7 @@ const handleSignup = () => {
                   (val) => !!val || '必填',
                   (val) => emailRule.test(val) || 'email格式有誤',
                 ]"
+                lazy-rules
               />
 
               <q-input
@@ -144,6 +157,7 @@ const handleSignup = () => {
                 type="password"
                 clearable
                 :rules="[(val) => !!val || '必填']"
+                lazy-rules
               />
 
               <q-input
@@ -156,6 +170,7 @@ const handleSignup = () => {
                   (val) => formSignup.psw1 == formSignup.psw2 || '密碼不一致',
                 ]"
                 clearable
+                lazy-rules
               />
               <p v-if="errMsg2" class="text-red-600 absolute left-0 bottom-0">
                 {{ errMsg2 }}
@@ -174,6 +189,18 @@ const handleSignup = () => {
           </q-form>
         </q-tab-panel>
       </q-tab-panels>
+
+      <div class="px-4 py-6">
+        <h3>使用其他註冊/登入</h3>
+        <q-btn
+          label="GOOGLE"
+          icon="fab fa-google"
+          size="md"
+          color="accent"
+          @click="handleGoogle"
+          rounded
+        />
+      </div>
     </div>
   </div>
 </template>

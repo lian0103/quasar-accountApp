@@ -3,9 +3,17 @@ import {
   getAuth,
   signOut,
   signInWithEmailAndPassword,
+  signInWithPopup,
+  GoogleAuthProvider,
 } from "firebase/auth";
 
 const firebaseAuth = getAuth();
+
+const provider = new GoogleAuthProvider();
+provider.setCustomParameters({
+  prompt: "select_account"
+});
+// console.log(provider);
 
 export const createUser = ({ email, password }) => {
   return new Promise((solve, reject) => {
@@ -20,8 +28,6 @@ export const createUser = ({ email, password }) => {
       });
   });
 };
-
-export const signIn = () => {};
 
 export const fiebaseSignOut = () => {
   return new Promise((solve, reject) => {
@@ -41,6 +47,20 @@ export const firebaseSignIn = ({ email, password }) => {
     signInWithEmailAndPassword(firebaseAuth, email, password)
       .then((res) => {
         // console.log("signin", res.user);
+        solve(res.user);
+      })
+      .catch((err) => {
+        reject(err);
+      });
+  });
+};
+
+export const loginWithGoogle = () => {
+  return new Promise((solve, reject) => {
+    console.log("loginWithGoogle");
+    signInWithPopup(firebaseAuth, provider)
+      .then((res) => {
+        // console.log(res.user);
         solve(res.user);
       })
       .catch((err) => {
