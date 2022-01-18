@@ -19,7 +19,9 @@ Vue3apexchart
 
 ## Features
 ### 權限
-1. 註冊user
+1. 註冊user 
+  email/password
+  google帳號登入
 2. 登入/登出
 
 ### 記帳
