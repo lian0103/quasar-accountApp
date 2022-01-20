@@ -1,5 +1,5 @@
 <script setup>
-import HeaderVue from "src/components/Header.vue";
+import HeaderVue from "../components/Header.vue";
 import { useUserStore } from "../stores/userInfo";
 import { useRouter } from "vue-router";
 
