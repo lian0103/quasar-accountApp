@@ -24,6 +24,12 @@ $negative: #EE1A38;
 $info: #08998F;
 $warning: #f2c037;
 
+@import url('https://fonts.googleapis.com/css2?family=Rubik+Beastly&display=swap');
+
+body{
+  font-family: 'Rubik Beastly', cursive;
+}
+
 .body--dark {
   .q-tab--inactive {
     color: #fff !important;

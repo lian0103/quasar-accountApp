@@ -12,20 +12,21 @@ $router.beforeEach((to, from, next) => {
   // console.log(userStore.userInfo);
   if (to.fullPath == "/signup" && userStore.userInfo) {
     // console.log($q.platform.is)
-    if ($q.platform.is.desktop) {
-      $q.dialog({
-        title: `請先登出`,
-        message: "登入狀態下無法登入/註冊新帳號",
-      }).onOk(() => {});
-    }
-
     next("/edit");
+  } else if (
+    !userStore.userInfo &&
+    to.fullPath != "/signup" &&
+    to.fullPath != "/"
+  ) {
+    $q.dialog({
+      title: `請先登入`,
+      message: "",
+    }).onOk(() => {
+      next("/signup");
+    });
+  } else {
+    next();
   }
-
-  if (!userStore.userInfo && to.fullPath != "/signup") {
-    next("/signup");
-  }
-  next();
 });
 </script>
 
