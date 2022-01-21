@@ -1,6 +1,16 @@
 {
   "rules": {
-    ".read": "true", 
-    ".write": "true"
+		"spend":{
+      "$uid":{
+        ".read": "auth.uid == $uid", 
+    		".write": "auth.uid == $uid"
+      }
+    },
+    "tags":{
+      "$uid":{
+        ".read": "auth.uid == $uid", 
+    		".write": "auth.uid == $uid"
+      }
+    }
   }
 }
