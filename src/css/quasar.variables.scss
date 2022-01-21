@@ -13,21 +13,26 @@
 // Tip: Use the "Theme Builder" on Quasar's documentation website.
 
 $primary: #5341f0;
-$secondary: #D6D4AB;
+$secondary: #d6d4ab;
 $accent: #9c27b0;
 
 $dark: #a1a1a1;
 $dark-page: #ccc;
 
-$positive: #D6D4AB;
-$negative: #EE1A38;
-$info: #08998F;
+$positive: #d6d4ab;
+$negative: #ee1a38;
+$info: #08998f;
 $warning: #f2c037;
 
-@import url('https://fonts.googleapis.com/css2?family=Rubik+Beastly&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Oswald:wght@300;500&display=swap");
 
-body{
-  font-family: 'Rubik Beastly', cursive;
+body {
+  font-family: "Oswald" !important;
+  font-weight: 300;
+}
+
+.font-Oswald-500 {
+  font-weight: 500;
 }
 
 .body--dark {
