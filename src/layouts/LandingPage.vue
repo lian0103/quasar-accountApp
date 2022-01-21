@@ -126,46 +126,46 @@ const slide = ref("1");
           >
             <q-carousel-slide
               name="1"
-              class="bg-contain bg-left-top bg-no-repeat column no-wrap flex-center"
+              class="bg-contain bg-left-top bg-no-repeat column no-wrap flex-center items-end px-0"
               img-src="https://i.imgur.com/WA6H8s5.jpg"
             >
               <p
-                class="w-full md:w-1/2 text-2xl text-black text-right font-bold"
+                class="text-xl text-white text-right bg-info p-2 rounded"
               >
-                Safari下載
+                Safari下載>>
               </p>
             </q-carousel-slide>
             <q-carousel-slide
               name="2"
-              class="bg-contain bg-left-top bg-no-repeat column no-wrap flex-center"
+              class="bg-contain bg-left-top bg-no-repeat column no-wrap flex-center items-end px-0"
               img-src="https://i.imgur.com/eAxLq5P.jpg"
             >
               <p
-                class="w-full md:w-1/2 text-2xl text-black text-right font-bold"
+                class="text-xl text-white text-right bg-info p-2 rounded"
               >
-                主畫面圖示
+                畫面圖示>>
               </p>
             </q-carousel-slide>
             <q-carousel-slide
               name="3"
-              class="bg-contain bg-left-top bg-no-repeat column no-wrap flex-center"
+              class="bg-contain bg-left-top bg-no-repeat column no-wrap flex-center items-end px-0"
               img-src="https://i.imgur.com/4oMvR5Z.jpg"
             >
               <p
-                class="w-full md:w-1/2 text-2xl text-black text-right font-bold"
+                class="text-xl text-white text-right bg-info p-2 rounded"
               >
-                統計花費
+                統計花費>>
               </p>
             </q-carousel-slide>
             <q-carousel-slide
               name="4"
-              class="bg-contain bg-left-top bg-no-repeat column no-wrap flex-center"
+              class="bg-contain bg-left-top bg-no-repeat column no-wrap flex-center items-end px-0"
               img-src="https://i.imgur.com/kWiwl2m.jpg"
             >
               <p
-                class="w-full md:w-1/2 text-2xl text-black text-right font-bold"
+                class="text-xl text-white text-right bg-info p-2 rounded"
               >
-                紀錄花費
+                紀錄花費>>
               </p>
             </q-carousel-slide>
           </q-carousel>
