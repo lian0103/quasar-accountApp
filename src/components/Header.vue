@@ -1,73 +1,31 @@
 <script setup>
-import { useUserStore } from "../stores/userInfo";
-import { fiebaseSignOut } from "../firebase/auth";
 import { useRouter } from "vue-router";
+import { useAppStore } from "../stores/index";
 
 const $router = useRouter();
-const userStore = useUserStore();
+const appStore = useAppStore();
 
-const handleSignInOut = () => {
-  if (userStore.userInfo) {
-    fiebaseSignOut()
-      .then((res) => {
-        userStore.userInfo = null;
-        userStore.pageTab = "login";
-        userStore.tagsArr = [];
-        userStore.spendList = [];
-        localStorage.setItem("userInfo", null);
-        $router.push({ path: "/" });
-      })
-      .catch((err) => {});
-  }
-  if (!userStore.userInfo) {
-    userStore.pageTab = "login";
-    $router.push({ path: "/signup" });
-  }
+const toggleLeftDrawer = () => {
+  // console.log(appStore.$state.leftDrawerOpen);
+  appStore.$state.leftDrawerOpen = !appStore.$state.leftDrawerOpen;
 };
 </script>
 <template>
   <q-header class="header" elevated>
     <q-toolbar>
       <q-toolbar-title class="flex">
+        <q-btn dense flat icon="menu" @click="toggleLeftDrawer" />
         <img
           class="rounded-full w-12 h-12 m-2 justify-center"
-          src="../assets/favicon-96x96.png.ico"
+          src="../assets/quasar-logo-vertical.svg"
           alt=""
         />
         <div class="py-4 cursor-pointer" @click="$router.push({ path: '/' })">
-          Account
+          HeadTitle
         </div>
       </q-toolbar-title>
-      <!-- <q-btn
-        class="mx-2"
-        :label="userStore.userInfo ? 'SignOut' : 'Login'"
-        @click="handleSignInOut"
-        color="secondary"
-      /> -->
 
-      <q-btn color="secondary" label="Menu">
-        <q-menu
-          class="bg-white text-purple-600"
-          auto-close
-          transition-show="jump-down"
-          transition-hide="jump-up"
-        >
-          <q-list style="min-width: 80px">
-            <q-item clickable v-close-popup>
-              <q-item-section @click="handleSignInOut">{{
-                userStore.userInfo ? "SignOut" : "Login"
-              }}</q-item-section>
-            </q-item>
-            <q-item clickable v-close-popup>
-              <q-item-section @click="$router.push({ path: '/edit' })"
-                >Edit</q-item-section
-              >
-            </q-item>
-          </q-list>
-        </q-menu>
-      </q-btn>
-
-      <div class="px-2">v0.0.5</div>
+      <div class="px-2">v0.0.1</div>
     </q-toolbar>
   </q-header>
 </template>

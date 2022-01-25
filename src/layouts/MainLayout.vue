@@ -1,27 +1,34 @@
 <script setup>
 import HeaderVue from "../components/Header.vue";
-import { useUserStore } from "../stores/userInfo";
 import { useRouter } from "vue-router";
+import { useAppStore } from "../stores/index";
+
+const appStore = useAppStore();
 
 const $router = useRouter();
-const userStore = useUserStore();
-
-if (userStore.userInfo) {
-  userStore.subscribeFirebaseRealtimeDB();
-  $router.push({path:'/edit'})
-}
-
 </script>
 
 <template>
-  <q-layout view="lHh Lpr lFf">
+  <q-layout view="hHh Lpr lFf">
     <HeaderVue />
-
+    <q-drawer
+      show-if-above
+      v-model="appStore.$state.leftDrawerOpen"
+      side="left"
+      bordered
+    >
+      <q-list style="min-width: 80px">
+        <q-item clickable v-close-popup>
+          <q-item-section @click="() => {}"> item A</q-item-section>
+        </q-item>
+        <q-item clickable v-close-popup>
+          <q-item-section @click="$router.push({ path: '/' })"
+            >item B</q-item-section
+          >
+        </q-item>
+      </q-list>
+    </q-drawer>
     <q-page-container>
-      <q-tabs v-if="userStore.userInfo">
-        <q-route-tab class="w-1/2" icon="fas fa-dollar-sign" to="/edit" exact />
-        <q-route-tab class="w-1/2" icon="fas fa-info-circle" to="/info" exact />
-      </q-tabs>
       <router-view />
     </q-page-container>
   </q-layout>

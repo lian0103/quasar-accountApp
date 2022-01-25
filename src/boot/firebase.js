@@ -1,1 +1,1 @@
-import "../firebase/tags";
+import "../firebase/index";
