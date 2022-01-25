@@ -10,24 +10,6 @@ const $router = useRouter();
 
 <template>
   <q-layout view="hHh Lpr lFf">
-    <HeaderVue />
-    <q-drawer
-      show-if-above
-      v-model="appStore.$state.leftDrawerOpen"
-      side="left"
-      bordered
-    >
-      <q-list style="min-width: 80px">
-        <q-item clickable v-close-popup>
-          <q-item-section @click="() => {}"> item A</q-item-section>
-        </q-item>
-        <q-item clickable v-close-popup>
-          <q-item-section @click="$router.push({ path: '/' })"
-            >item B</q-item-section
-          >
-        </q-item>
-      </q-list>
-    </q-drawer>
     <q-page-container>
       <router-view />
     </q-page-container>

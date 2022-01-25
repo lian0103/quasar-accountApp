@@ -12,26 +12,27 @@
 // to match your app's branding.
 // Tip: Use the "Theme Builder" on Quasar's documentation website.
 
-$primary: #B1D3A1;
-$secondary: #BCD8B5;
-$accent: #C8D36D;
+$primary: #b1d3a1;
+$secondary: #bcd8b5;
+$accent: #c8d36d;
 
-$dark: #a1a1a1;
+$dark: #333;
 $dark-page: #ccc;
 
-$positive: #B9AA81;
+$positive: #b9aa81;
 $negative: #ee1a38;
 $info: #08998f;
 $warning: #f2c037;
 
-@import url("https://fonts.googleapis.com/css2?family=Oswald:wght@300;500&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;500&display=swap");
 
 body {
-  font-family: "Oswald" !important;
+  font-family: "Noto Sans TC", sans-serif !important;
   font-weight: 300;
 }
 
-.font-Oswald-500 {
+.font-Noto {
+  font-family: "Noto Sans TC", sans-serif !important;
   font-weight: 500;
 }
 
