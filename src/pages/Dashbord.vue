@@ -1,63 +1,191 @@
 <script setup>
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { onMounted, reactive, ref, computed } from "vue";
-import { fakeData } from "./fakeData";
+import {
+  onMounted,
+  reactive,
+  ref,
+  computed,
+  getCurrentInstance,
+  onUpdated,
+} from "vue";
+import { reportData, departmentInfo, depMembers } from "./fakeData";
+import { v4 as uuidv4 } from "uuid";
+import { date, useQuasar } from "quasar";
+import { useAppStore } from "../stores/index";
 
+const $q = useQuasar();
+
+const instance = getCurrentInstance();
+
+const appStore = useAppStore();
+const curDepInfo = computed(() => {
+  return { ...appStore.departmentInfo };
+});
+const curReportList = computed(() => {
+  return appStore.reportData.map((item) => item);
+});
+const countRelatedLength = computed(() => {
+  let num = 0;
+  curReportList.value.forEach((item) => {
+    // console.log(item.relatedList.length);
+    num += item.relatedList.length;
+  });
+  // console.log(num);
+  return num;
+});
+
+const { addToDate } = date;
 const formShow = ref(false);
-const dateRange = ref({ from: "2022/01/26", to: "2022/01/27" });
-const curList = reactive(
-  fakeData.map((item) => {
-    return {
-      ...item,
-      hover: false,
-    };
-  })
-);
-console.log(curList);
+const formShow2 = ref(false);
+const formShowDepInfo = ref(false);
+const dateRange = ref({
+  from: date.formatDate(new Date(), "MM/DD"),
+  to: date.formatDate(addToDate(new Date(), { days: 1 }), "MM/DD"),
+});
+
+const dateSingle = ref(date.formatDate(new Date(), "MM/DD"));
+
 const formData = reactive({
-  name: "aa",
+  name: "",
   breakType: "病假",
   dateRange: computed(() => {
-    console.log(dateRange.value);
+    // console.log(dateRange.value);
     let { from = "", to = "" } = dateRange.value;
     return from + " - " + to;
   }),
-  symptom: "中樂透",
+  symptom: "",
+  textAll: computed(() => {
+    let { from = "", to = "" } = dateRange.value;
+    let date = from + " - " + to;
+    return (
+      formData.name +
+      " " +
+      formData.breakType +
+      " " +
+      date +
+      " " +
+      (formData.symptom || "")
+    );
+  }),
 });
 
-const handleAdd = () => {
+const formData2 = reactive({
+  curRecordItemUuid: null,
+  textAll: "",
+});
+
+const formDataDepInfo = reactive({
+  ...curDepInfo.value,
+  date: computed(() => {
+    // console.log(dateSingle.value);
+    return dateSingle.value;
+  }),
+});
+
+const handleDepInfoSave = () => {
+  // console.log("formDataDepInfo", formDataDepInfo);
+  appStore.setDepInfo(formDataDepInfo);
+  formShowDepInfo.value = false;
+};
+
+const handleRowAdd = () => {
   formShow.value = true;
 };
 
 const handleRecordSave = () => {
-  console.log(formData);
+  // console.log(curReportList.value);
+  appStore.addReportData({
+    description: formData.textAll,
+    relatedListShow: true,
+    relatedList: [],
+    uuid: uuidv4(),
+  });
+  formShow.value = false;
 };
 
-const handleRecordDelete = () => {};
+const handleRowDelete = (tarItem) => {
+  // console.log("in handleRowDelete");
+  $q.dialog({
+    title: "",
+    message: `刪除這筆"${tarItem.description}"?`,
+    cancel: true,
+  }).onOk(() => {
+    let newData = curReportList.value.filter(
+      (item) => item.uuid != tarItem.uuid
+    );
+    appStore.setReportData(newData);
+  });
+};
 
-const handleRowDelete = (e) => {
-  console.log("in handleRowDelete");
+const handleRelatedDelete = (tarItem, tar) => {
+  // console.log("in handleRelatedDelete");
+  $q.dialog({
+    title: "",
+    message: `刪除這筆"${tar}"?`,
+    cancel: true,
+  }).onOk(() => {
+    let newData = curReportList.value.map((item) => {
+      if (item.uuid == tarItem.uuid) {
+        if (item.relatedList.indexOf(tar) >= 0) {
+          delete item.relatedList[item.relatedList.indexOf(tar)];
+          // console.log(item.relatedList);
+        }
+        return {
+          ...item,
+          relatedList: item.relatedList.filter((str) => str),
+        };
+      }
+      return item;
+    });
+    appStore.setReportData(newData);
+  });
+};
+
+const handleRelatedSave = () => {
+  let newData = curReportList.value.map((item) => {
+    // console.log("uuid", item.uuid);
+    if (item.uuid == formData2.curRecordItemUuid) {
+      // console.log("in", item.uuid);
+      return {
+        ...item,
+        relatedList: [...item.relatedList, formData2.textAll],
+      };
+    }
+    return item;
+  });
+
+  appStore.setReportData(newData);
+  // console.log(appStore.reportData);
+  formShow2.value = false;
+};
+
+const handleRelatedRowAdd = (item) => {
+  formShow2.value = true;
+  formData2.curRecordItemUuid = item.uuid;
+  // console.log("target", item.uuid);
 };
 
 const handleRules = (target) => {
   switch (target) {
-    case "name": {
-      return (val) => !!val || "必填";
-    }
-    case "breakType": {
+    case "need": {
       return (val) => !!val || "必填";
     }
     case "dateRange": {
       return (val) => {
         let { from, to } = dateRange.value;
-
         let isSame = from !== to;
-        console.log(from, to, isSame);
+        // console.log(from, to, isSame);
         return isSame || "起訖時間應為不同";
       };
     }
   }
+};
+
+const handleRowShowMore = (tarItem) => {
+  tarItem.relatedListShow = !tarItem.relatedListShow;
+  appStore.setReportData(curReportList.value);
+  instance.proxy.$forceUpdate();
 };
 
 onMounted(() => {
@@ -73,6 +201,15 @@ onMounted(() => {
     });
   });
 });
+
+const handleSelectClose = () => {
+  // console.log("in,,,handleSelectClose");
+  instance.refs.qDateProxy1.hide();
+};
+
+// onUpdated(() => {
+//   console.log("instance", instance);
+// });
 </script>
 
 <template>
@@ -81,8 +218,11 @@ onMounted(() => {
       <div class="w-full pt-4 text-xl">
         <div class="row">
           <div class="col-12">
-            <h2 class="text-center px-4 tracking-wider color-font3">
-              資訊處疫情戰情回報
+            <h2
+              class="text-center px-4 tracking-wider color-font3"
+              @click="formShowDepInfo = true"
+            >
+              {{ curDepInfo.title }}
             </h2>
           </div>
         </div>
@@ -100,9 +240,9 @@ onMounted(() => {
                 </div>
 
                 <!-- time numbers -->
-                <span class="absolute inset-0 text-center leading-snug"
-                  >01</span
-                >
+                <span class="absolute inset-0 text-center leading-snug">{{
+                  curDepInfo.date.split("/")[0] || "/"
+                }}</span>
                 <span class="absolute right-1 bottom-1 text-lg font-Noto"
                   >月</span
                 >
@@ -123,9 +263,9 @@ onMounted(() => {
                   <div class="bg-gradient-to-br from-gray-700 to-black"></div>
                 </div>
 
-                <span class="absolute inset-0 text-center leading-snug"
-                  >25</span
-                >
+                <span class="absolute inset-0 text-center leading-snug">{{
+                  curDepInfo.date.split("/")[1] || "/"
+                }}</span>
                 <span class="absolute right-1 bottom-1 text-lg font-Noto"
                   >日</span
                 >
@@ -147,7 +287,7 @@ onMounted(() => {
       <div class="row">
         <div class="col-12">
           <h2 class="text-center px-4 tracking-wider text-xl text-primary">
-            資訊開發部
+            {{ curDepInfo.depName }}
           </h2>
         </div>
       </div>
@@ -158,19 +298,19 @@ onMounted(() => {
               class="relative rounded drop-shadow-lg font-mono font-bold text-6xl flex flex-nowrap justify-around text-center"
             >
               <div class="relative p-2 w-24 h-24 mx-2">
-                28
+                {{ depMembers.length }}
                 <span class="absolute bottom-1 left-0 text-sm w-full"
                   >現有人數</span
                 >
               </div>
               <div class="relative p-2 w-24 h-24 mx-2">
-                2
+                {{ curReportList.length }}
                 <span class="absolute bottom-1 left-0 text-sm w-full"
                   >同仁異常</span
                 >
               </div>
               <div class="relative p-2 w-24 h-24 mx-2">
-                0
+                {{ countRelatedLength }}
                 <span class="absolute bottom-1 left-0 text-sm w-full"
                   >同住家人異常</span
                 >
@@ -186,17 +326,14 @@ onMounted(() => {
               <div class="h-64 overflow-y-scrol">
                 <div
                   class="mt-1 mb-3 px-0 pt-1 flex flex-col text-black leading-normal bg-white rounded-lg text-base"
-                  v-for="(item, index) in curList"
-                  @mouseover="item.hover = true"
-                  @mouseleave="item.hover = false"
-                  :key="index"
+                  v-for="item in curReportList"
+                  :key="item.uuid"
                 >
                   <div
                     class="flex flex-nowrap relative"
-                    @click="
-                      (e) => {
-                        e.preventDefault();
-                        item.relatedListShow = !item.relatedListShow;
+                    @click.prevent="
+                      () => {
+                        handleRowShowMore(item);
                       }
                     "
                   >
@@ -213,20 +350,29 @@ onMounted(() => {
                     }}</span>
 
                     <span
+                      v-if="item.relatedListShow"
                       class="block text-md text-gray-300 absolute -right-5 top-0 font-normal"
                     >
                       <i
-                        v-show="item.hover"
                         class="fas fa-times"
-                        @click.stop="handleRowDelete"
+                        @click.stop="
+                          () => {
+                            handleRowDelete(item);
+                          }
+                        "
                     /></span>
                   </div>
 
                   <div
-                    v-show="item.relatedListShow"
+                    v-if="item.relatedListShow"
                     class="flex flex-nowrap bg-bg1 py-2"
-                    v-for="(rItem, rIndex) in item.relatedList"
-                    :key="'r' + rIndex"
+                    v-for="rItem in item.relatedList"
+                    :key="'r' + item.uuid"
+                    @click="
+                      () => {
+                        handleRelatedDelete(item, rItem);
+                      }
+                    "
                   >
                     <span class="px-2"> <i class="fas fa-home" /></span>
 
@@ -234,6 +380,28 @@ onMounted(() => {
                       {{ rItem }}
                     </div>
                   </div>
+                  <div
+                    class="flex flex-nowrap bg-bg1 py-2"
+                    v-if="item.relatedListShow"
+                  >
+                    <p
+                      class="px-2 cursor-pointer text-primary"
+                      @click="
+                        () => {
+                          handleRelatedRowAdd(item);
+                        }
+                      "
+                    >
+                      <i class="fas fa-plus"></i> 新增同住家人
+                    </p>
+                  </div>
+                </div>
+                <div
+                  class="mt-1 mb-3 px-0 pt-1 flex flex-col leading-normal text-primary rounded-lg text-base"
+                >
+                  <p class="px-2 cursor-pointer" @click="handleRowAdd">
+                    <i class="fas fa-plus"></i> 新增同仁
+                  </p>
                 </div>
               </div>
             </div>
@@ -256,10 +424,10 @@ onMounted(() => {
             <div class="left w-full">
               <q-select
                 v-model="formData.name"
-                :options="['aa', 'bb', 'cc']"
+                :options="depMembers"
                 behavior="menu"
                 label="同仁"
-                :rules="[handleRules('name')]"
+                :rules="[handleRules('need')]"
               />
 
               <q-select
@@ -267,7 +435,7 @@ onMounted(() => {
                 :options="['病假', '事假', '其他']"
                 behavior="menu"
                 label="請假別"
-                :rules="[handleRules('breakType')]"
+                :rules="[handleRules('need')]"
               />
 
               <q-input
@@ -282,7 +450,13 @@ onMounted(() => {
                       transition-show="scale"
                       transition-hide="scale"
                     >
-                      <q-date range title="" v-model="dateRange">
+                      <q-date
+                        minimal
+                        range
+                        title=""
+                        v-model="dateRange"
+                        mask="MM/DD"
+                      >
                         <div class="row items-center justify-end">
                           <q-btn
                             v-close-popup
@@ -300,17 +474,114 @@ onMounted(() => {
               <q-input
                 maxlength="20"
                 v-model.number="formData.symptom"
-                label="症狀紀錄"
+                label="症狀"
                 clearable
               />
-            </div>
-            <div class="w-full flex justify-between">
-              <q-btn
-                color="negative"
-                label="Delete"
-                @click="handleRecordDelete"
+              <q-input
+                maxlength="20"
+                v-model.number="formData.textAll"
+                label="說明:[同仁][請假別][日期][症狀]"
+                disable
               />
-              <q-btn label="Save" type="submit" />
+            </div>
+            <div class="w-full flex justify-center">
+              <q-btn label="儲存" type="submit" />
+            </div>
+          </q-form>
+        </q-card-section>
+      </q-card>
+    </q-dialog>
+
+    <q-dialog v-model="formShow2">
+      <q-card style="width: 700px; max-width: 80vw">
+        <q-card-section>
+          <div class="text-h6">同仁同住家人狀況新增</div>
+        </q-card-section>
+
+        <q-card-section class="q-pt-none">
+          <q-form
+            @submit="handleRelatedSave"
+            class="q-gutter-md flex justify-around mx-auto"
+          >
+            <div class="left w-full">
+              <q-input
+                maxlength="30"
+                v-model.number="formData2.textAll"
+                :rules="[handleRules('need')]"
+                label="說明"
+              />
+            </div>
+            <div class="w-full flex justify-center">
+              <q-btn label="儲存" type="submit" />
+            </div>
+          </q-form>
+        </q-card-section>
+      </q-card>
+    </q-dialog>
+
+    <q-dialog v-model="formShowDepInfo">
+      <q-card style="width: 700px; max-width: 80vw">
+        <q-card-section>
+          <div class="text-h6">回報資訊設定</div>
+        </q-card-section>
+
+        <q-card-section class="q-pt-none">
+          <q-form
+            @submit="handleDepInfoSave"
+            class="q-gutter-md flex justify-around mx-auto"
+          >
+            <div class="left w-full">
+              <q-input
+                filled
+                v-model="formDataDepInfo.date"
+                :rules="[handleRules('need')]"
+              >
+                <template v-slot:append>
+                  <q-icon name="event" class="cursor-pointer">
+                    <q-popup-proxy
+                      ref="qDateProxy1"
+                      cover
+                      transition-show="scale"
+                      transition-hide="scale"
+                    >
+                      <q-date
+                        minimal
+                        v-model="dateSingle"
+                        mask="MM/DD"
+                        @click="handleSelectClose"
+                      >
+                        <div class="row items-center justify-end">
+                          <q-btn
+                            v-close-popup
+                            label="Close"
+                            color="primary"
+                            flat
+                          />
+                        </div>
+                      </q-date>
+                    </q-popup-proxy>
+                  </q-icon>
+                </template>
+              </q-input>
+
+              <q-input
+                maxlength="20"
+                v-model="formDataDepInfo.title"
+                label="回報標題"
+                :rules="[handleRules('need')]"
+                clearable
+              />
+              <q-input
+                maxlength="20"
+                v-model="formDataDepInfo.depName"
+                label="單位"
+                :rules="[handleRules('need')]"
+                clearable
+              />
+
+            </div>
+            <div class="w-full flex justify-center">
+              <q-btn label="儲存" type="submit" />
             </div>
           </q-form>
         </q-card-section>
