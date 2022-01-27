@@ -10,7 +10,7 @@ const $router = useRouter();
 
 <template>
   <q-layout view="hHh Lpr lFf">
-    <q-page-container>
+    <q-page-container class="bg-bg1">
       <router-view />
     </q-page-container>
   </q-layout>
