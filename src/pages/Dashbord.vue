@@ -206,9 +206,9 @@ onMounted(() => {
       // console.log("in~~~??",ScrollTrigger)
       if (window.scrollY >= 100) {
         // console.log("in~");
-        headTilte.value = `2022年${curDepInfo.value.date?.split("/")[0]}月${
-          curDepInfo.value.date?.split("/")[1]
-        }日`;
+        headTilte.value = `2022年${
+          curDepInfo.value.date?.split("/")[0] || "/"
+        }月${curDepInfo.value.date?.split("/")[1] || "/"}日`;
       } else {
         headTilte.value = curDepInfo.value.title;
       }
