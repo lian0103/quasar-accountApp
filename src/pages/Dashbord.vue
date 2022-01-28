@@ -230,7 +230,7 @@ const handleSelectClose = () => {
         <div class="row">
           <div class="col-12">
             <h2
-              class="text-center tracking-wider color-font3 cursor-pointer py-0 font-bold"
+              class="text-center tracking-wider color-font3 cursor-pointer py-0 font-Noto"
             >
               {{ headTilte }}
             </h2>
@@ -239,13 +239,13 @@ const handleSelectClose = () => {
         <div class="row">
           <div class="col-12 col-md-8 mx-auto">
             <div
-              class="relative drop-shadow-lg font-mono text-6xl flex justify-center text-black"
+              class="relative drop-shadow-lg text-6xl flex justify-center text-black"
             >
               <!-- left side -->
               <div class="flipClock relative mx-2">
                 <!-- time numbers -->
                 <span
-                  class="absolute inset-0 text-center leading-snug pt-2 bg-month"
+                  class="absolute inset-0 text-center leading-snug pt-2 bg-month font-mono"
                   >{{ curDepInfo.date.split("/")[0] || "/" }}</span
                 >
                 <!-- line across the middle -->
@@ -260,7 +260,7 @@ const handleSelectClose = () => {
               <!-- right side -->
               <div class="flipClock relative mx-2">
                 <span
-                  class="absolute inset-0 text-center leading-snug pt-2 bg-day"
+                  class="absolute inset-0 text-center leading-snug pt-2 bg-day font-mono"
                   >{{ curDepInfo.date.split("/")[1] || "/" }}</span
                 >
                 <!-- line across the middle -->
@@ -281,7 +281,7 @@ const handleSelectClose = () => {
       class="panel panel2 w-full mx-auto mt-4 pb-6 bg-overlay rounded-tl-3xl rounded-tr-3xl"
     >
       <div class="row">
-        <div class="col-12">
+        <div class="col-12 font-Noto">
           <h2
             class="text-center px-4 tracking-wider text-xl text-primary pt-5 pb-4"
           >
@@ -293,23 +293,23 @@ const handleSelectClose = () => {
         <div class="col-12">
           <div class="col-12 col-md-8 px-4 mx-auto">
             <div
-              class="relative rounded drop-shadow-lg font-mono font-bold text-5xl flex flex-nowrap justify-around text-center text-primary"
+              class="relative rounded text-5xl flex flex-nowrap justify-around text-center text-primary"
             >
-              <div class="relative p-2 h-24 mx-2 w-1/3">
+              <div class="relative p-2 h-24 mx-2 w-1/3 font-mono">
                 {{ depMembers.length }}
-                <span class="absolute bottom-1 left-0 text-lg w-full"
+                <span class="absolute bottom-1 left-0 text-lg w-full font-Noto"
                   >現有人數</span
                 >
               </div>
-              <div class="relative p-2 h-24 mx-2 w-1/3">
+              <div class="relative p-2 h-24 mx-2 w-1/3 font-mono">
                 {{ curReportList.length }}
-                <span class="absolute bottom-1 left-0 text-lg w-full"
+                <span class="absolute bottom-1 left-0 text-lg w-full font-Noto"
                   >同仁異常</span
                 >
               </div>
-              <div class="relative p-2 h-24 mx-2 w-1/3">
+              <div class="relative p-2 h-24 mx-2 w-1/3 font-mono">
                 {{ countRelatedLength }}
-                <span class="absolute bottom-1 left-0 text-lg w-full"
+                <span class="absolute bottom-1 left-0 text-lg w-full font-Noto"
                   >同住家人異常</span
                 >
               </div>
@@ -319,28 +319,29 @@ const handleSelectClose = () => {
               <div class="h-1 w-full bg-primary"></div>
             </div>
 
-            <div class="relative rounded drop-shadow-lg flex flex-col">
+            <div class="relative rounded flex flex-col">
               <h2 class="text-base text-primary">同仁異常狀況說明</h2>
               <div class="h-80 overflow-y-scroll">
                 <div
-                  style="width: 90%"
-                  class="my-2 px-0 pt-1 flex flex-col text-black leading-normal text-sm"
+                  style="width: 100%"
+                  class="my-2 px-0 pt-1 flex flex-col text-black leading-normal text-sm cursor-pointer"
                   v-for="item in curReportList"
                   :key="item.uuid"
                 >
                   <div
                     class="inputCus flex flex-nowrap relative bg-white py-2.5 rounded-lg"
+                    :style="{ width: item.relatedListShow ? '93%' : '100%' }"
                     @click.prevent="
                       () => {
                         handleRowShowMore(item);
                       }
                     "
                   >
-                    <span class="text-lg px-2 relative -top-1"
-                      ><i class="fas fa-user"
-                    /></span>
+                    <span class="text-lg px-2">
+                      <img src="../assets/icon-people.svg" alt="" />
+                    </span>
 
-                    <div class="pr-6 text-sm inputDescription">
+                    <div class="pr-6 text-sm inputDescription font-Noto">
                       {{ item.description }}
                     </div>
 
@@ -354,19 +355,22 @@ const handleSelectClose = () => {
                       v-if="item.relatedListShow"
                       class="block text-md text-gray-300 absolute -right-5 top-2.5 font-normal"
                     >
-                      <i
-                        class="fas fa-times"
+                      <img
+                        src="../assets/icon-delete.svg"
+                        alt=""
+                        class="relative left-2"
                         @click.stop="
                           () => {
                             handleRowDelete(item);
                           }
                         "
-                    /></span>
+                      />
+                    </span>
                   </div>
 
                   <div
                     v-if="item.relatedListShow"
-                    class="inputCus flex flex-nowrap bg-bg1 mt-2 py-2.5 rounded-lg shadow-none"
+                    class="inputCus flex flex-nowrap bg-bg1 mt-2 py-2.5 rounded-lg shadow-none cursor-pointer "
                     v-for="rItem in item.relatedList"
                     :key="'r' + item.uuid"
                     @click="
@@ -375,11 +379,11 @@ const handleSelectClose = () => {
                       }
                     "
                   >
-                    <span class="text-lg px-2 relative -top-1">
-                      <i class="fas fa-home"
-                    /></span>
+                    <span class="text-lg px-2">
+                      <img src="../assets/icon-home.svg" alt="" />
+                    </span>
 
-                    <div class="text-sm">
+                    <div class="text-sm inputDescription w-4/5 font-Noto">
                       {{ rItem }}
                     </div>
                   </div>
@@ -388,22 +392,22 @@ const handleSelectClose = () => {
                     v-if="item.relatedListShow"
                   >
                     <p
-                      class="px-2 cursor-pointer text-primary"
+                      class="px-2 cursor-pointer text-primary flex font-Noto"
                       @click="
                         () => {
                           handleRelatedRowAdd(item);
                         }
                       "
                     >
-                      <i class="fas fa-plus"></i> 新增同住家人
+                      <img src="../assets/icon-add.svg" alt=""> 新增同住家人
                     </p>
                   </div>
                 </div>
                 <div
-                  class="inputCus mt-3 px-0 pt-1 flex flex-col leading-normal text-primary rounded-lg text-sm"
+                  class="inputCus mt-3 px-0 pt-1 leading-normal text-primary rounded-lg"
                 >
-                  <p class="px-2 cursor-pointer" @click="handleRowAdd">
-                    <i class="fas fa-plus"></i> 新增同仁
+                  <p class="px-2 cursor-pointer flex font-Noto" @click="handleRowAdd">
+                     <img src="../assets/icon-add.svg" alt="" class="pr-2"> 新增同仁
                   </p>
                 </div>
               </div>
@@ -508,7 +512,7 @@ const handleSelectClose = () => {
           >
             <div class="left w-full">
               <q-input
-                maxlength="30"
+                maxlength="50"
                 v-model.number="formData2.textAll"
                 :rules="[handleRules('need')]"
                 label="說明"
@@ -622,12 +626,13 @@ const handleSelectClose = () => {
 .inputCus {
   height: 44px;
   white-space: nowrap;
-  width: 350px;
+  // width: 350px;
 }
 
 .inputDescription {
   width: 280px;
   overflow-x: scroll;
+  padding-right: 10px;
 }
 
 .bg-month {
