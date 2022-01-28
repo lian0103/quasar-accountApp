@@ -1,17 +1,10 @@
 <script setup>
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import {
-  onMounted,
-  reactive,
-  ref,
-  computed,
-  getCurrentInstance,
-  onUpdated,
-} from "vue";
-import { reportData, departmentInfo, depMembers } from "./fakeData";
+import { onMounted, reactive, ref, computed, getCurrentInstance } from "vue";
+import { depMembers } from "./fakeData";
 import { v4 as uuidv4 } from "uuid";
-import { date, useQuasar, scroll } from "quasar";
+import { date, useQuasar } from "quasar";
 import { useAppStore } from "../stores/index";
 
 const $q = useQuasar();
@@ -79,6 +72,7 @@ const formData2 = reactive({
 
 const formDataDepInfo = reactive({
   ...curDepInfo.value,
+
   date: computed(() => {
     // console.log(dateSingle.value);
     return dateSingle.value;
@@ -89,6 +83,7 @@ const handleDepInfoSave = () => {
   // console.log("formDataDepInfo", formDataDepInfo);
   appStore.setDepInfo(formDataDepInfo);
   formShowDepInfo.value = false;
+  handleTitleInfo();
 };
 
 const handleRowAdd = () => {
@@ -190,6 +185,17 @@ const handleRowShowMore = (tarItem) => {
   instance.proxy.$forceUpdate();
 };
 
+const handleTitleInfo = () => {
+  if (window.scrollY >= 100) {
+    // console.log("in~");
+    headTilte.value = `2022年${curDepInfo.value.date?.split("/")[0] || "/"}月${
+      curDepInfo.value.date?.split("/")[1] || "/"
+    }日`;
+  } else {
+    headTilte.value = curDepInfo.value.title;
+  }
+};
+
 onMounted(() => {
   gsap.registerPlugin(ScrollTrigger);
 
@@ -204,13 +210,8 @@ onMounted(() => {
 
     ScrollTrigger.addEventListener("scrollEnd", (e) => {
       // console.log("in~~~??",ScrollTrigger)
-      if (window.scrollY >= 100) {
-        // console.log("in~");
-        headTilte.value = `2022年${
-          curDepInfo.value.date?.split("/")[0] || "/"
-        }月${curDepInfo.value.date?.split("/")[1] || "/"}日`;
-      } else {
-        headTilte.value = curDepInfo.value.title;
+      if (!formShow.value && !formShow2.value && !formShowDepInfo.value) {
+        handleTitleInfo();
       }
     });
   });
@@ -220,10 +221,6 @@ const handleSelectClose = () => {
   // console.log("in,,,handleSelectClose");
   instance.refs.qDateProxy1.hide();
 };
-
-// onUpdated(() => {
-//   console.log("instance", instance);
-// });
 </script>
 
 <template>
@@ -233,57 +230,45 @@ const handleSelectClose = () => {
         <div class="row">
           <div class="col-12">
             <h2
-              class="text-center px-4 tracking-wider color-font3 cursor-pointer py-0 font-bold"
+              class="text-center tracking-wider color-font3 cursor-pointer py-0 font-bold"
             >
               {{ headTilte }}
             </h2>
           </div>
         </div>
         <div class="row">
-          <div class="col-12 col-md-8 px-4 mx-auto">
+          <div class="col-12 col-md-8 mx-auto">
             <div
               class="relative drop-shadow-lg font-mono text-6xl flex justify-center text-black"
             >
               <!-- left side -->
-              <div class="relative bg-white rounded-lg p-0 w-24 h-24 mx-2">
-                <!-- background grid of black squares -->
-                <!-- <div class="absolute inset-0 grid grid-rows-2">
-                  <div class="bg-gradient-to-br from-gray-800 to-black"></div>
-                  <div class="bg-gradient-to-br from-gray-700 to-black"></div>
-                </div> -->
-
+              <div class="flipClock relative mx-2">
                 <!-- time numbers -->
-                <span class="absolute inset-0 text-center leading-snug pt-1">{{
-                  curDepInfo.date.split("/")[0] || "/"
-                }}</span>
-                <span class="absolute right-1 bottom-1 text-lg font-Noto"
-                  >月</span
+                <span
+                  class="absolute inset-0 text-center leading-snug pt-2 bg-month"
+                  >{{ curDepInfo.date.split("/")[0] || "/" }}</span
                 >
-
                 <!-- line across the middle -->
-                <div class="absolute inset-0 flex items-center">
-                  <div class="h-1 w-full bg-gray-200"></div>
+                <div
+                  class="absolute inset-0 flex items-center top-1"
+                  style="width: 95%"
+                >
+                  <div class="h-1 w-full bg-line relative left-0.5"></div>
                 </div>
               </div>
 
               <!-- right side -->
-              <div class="relative bg-white rounded-lg p-8 w-24 h-24 mx-2">
-                <!-- background grid of black squares -->
-                <!-- <div class="absolute inset-0 grid grid-rows-2">
-                  <div class="bg-gradient-to-br from-gray-800 to-black"></div>
-                  <div class="bg-gradient-to-br from-gray-700 to-black"></div>
-                </div> -->
-
-                <span class="absolute inset-0 text-center leading-snug pt-1">{{
-                  curDepInfo.date.split("/")[1] || "/"
-                }}</span>
-                <span class="absolute right-1 bottom-1 text-lg font-Noto"
-                  >日</span
+              <div class="flipClock relative mx-2">
+                <span
+                  class="absolute inset-0 text-center leading-snug pt-2 bg-day"
+                  >{{ curDepInfo.date.split("/")[1] || "/" }}</span
                 >
-
                 <!-- line across the middle -->
-                <div class="absolute inset-0 flex items-center">
-                  <div class="h-1 w-full bg-gray-200"></div>
+                <div
+                  class="absolute inset-0 flex items-center top-1"
+                  style="width: 95%"
+                >
+                  <div class="h-1 w-full bg-line relative left-0.5"></div>
                 </div>
               </div>
             </div>
@@ -293,7 +278,7 @@ const handleSelectClose = () => {
     </div>
 
     <section
-      class="panel panel2 w-full mx-auto mt-4 pb-6 px-4 bg-overlay rounded-tl-3xl rounded-tr-3xl"
+      class="panel panel2 w-full mx-auto mt-4 pb-6 bg-overlay rounded-tl-3xl rounded-tr-3xl"
     >
       <div class="row">
         <div class="col-12">
@@ -308,23 +293,23 @@ const handleSelectClose = () => {
         <div class="col-12">
           <div class="col-12 col-md-8 px-4 mx-auto">
             <div
-              class="relative rounded drop-shadow-lg font-mono font-bold text-6xl flex flex-nowrap justify-around text-center text-primary"
+              class="relative rounded drop-shadow-lg font-mono font-bold text-5xl flex flex-nowrap justify-around text-center text-primary"
             >
-              <div class="relative p-2 w-24 h-24 mx-2">
+              <div class="relative p-2 h-24 mx-2 w-1/3">
                 {{ depMembers.length }}
-                <span class="absolute bottom-1 left-0 text-sm w-full"
+                <span class="absolute bottom-1 left-0 text-lg w-full"
                   >現有人數</span
                 >
               </div>
-              <div class="relative p-2 w-24 h-24 mx-2">
+              <div class="relative p-2 h-24 mx-2 w-1/3">
                 {{ curReportList.length }}
-                <span class="absolute bottom-1 left-0 text-sm w-full"
+                <span class="absolute bottom-1 left-0 text-lg w-full"
                   >同仁異常</span
                 >
               </div>
-              <div class="relative p-2 w-24 h-24 mx-2">
+              <div class="relative p-2 h-24 mx-2 w-1/3">
                 {{ countRelatedLength }}
-                <span class="absolute bottom-1 left-0 text-sm w-full"
+                <span class="absolute bottom-1 left-0 text-lg w-full"
                   >同住家人異常</span
                 >
               </div>
@@ -344,20 +329,22 @@ const handleSelectClose = () => {
                   :key="item.uuid"
                 >
                   <div
-                    class="flex flex-nowrap relative bg-white py-0.5 rounded-lg"
+                    class="inputCus flex flex-nowrap relative bg-white py-2.5 rounded-lg"
                     @click.prevent="
                       () => {
                         handleRowShowMore(item);
                       }
                     "
                   >
-                    <span class="px-3"> <i class="fas fa-user" /></span>
+                    <span class="text-lg px-2 relative -top-1"
+                      ><i class="fas fa-user"
+                    /></span>
 
-                    <div class="pr-6 text-sm">
+                    <div class="pr-6 text-sm inputDescription">
                       {{ item.description }}
                     </div>
 
-                    <span class="absolute right-3 top-0.5 font-mono">{{
+                    <span class="absolute right-3 top-2.5 font-mono">{{
                       item.relatedList.length > 0
                         ? "+" + item.relatedList.length
                         : "+0"
@@ -365,7 +352,7 @@ const handleSelectClose = () => {
 
                     <span
                       v-if="item.relatedListShow"
-                      class="block text-md text-gray-300 absolute -right-5 top-0.5 font-normal"
+                      class="block text-md text-gray-300 absolute -right-5 top-2.5 font-normal"
                     >
                       <i
                         class="fas fa-times"
@@ -379,7 +366,7 @@ const handleSelectClose = () => {
 
                   <div
                     v-if="item.relatedListShow"
-                    class="flex flex-nowrap bg-bg1 mt-2 py-0.5 rounded-lg"
+                    class="inputCus flex flex-nowrap bg-bg1 mt-2 py-2.5 rounded-lg shadow-none"
                     v-for="rItem in item.relatedList"
                     :key="'r' + item.uuid"
                     @click="
@@ -388,14 +375,16 @@ const handleSelectClose = () => {
                       }
                     "
                   >
-                    <span class="px-2"> <i class="fas fa-home" /></span>
+                    <span class="text-lg px-2 relative -top-1">
+                      <i class="fas fa-home"
+                    /></span>
 
                     <div class="text-sm">
                       {{ rItem }}
                     </div>
                   </div>
                   <div
-                    class="flex flex-nowrap bg-bg1 mt-2 py-0.5 rounded-lg"
+                    class="inputCus flex flex-nowrap bg-bg1 mt-2 py-2.5 rounded-lg shadow-none"
                     v-if="item.relatedListShow"
                   >
                     <p
@@ -411,7 +400,7 @@ const handleSelectClose = () => {
                   </div>
                 </div>
                 <div
-                  class="mt-4 px-0 pt-1 flex flex-col leading-normal text-primary rounded-lg text-base"
+                  class="inputCus mt-3 px-0 pt-1 flex flex-col leading-normal text-primary rounded-lg text-sm"
                 >
                   <p class="px-2 cursor-pointer" @click="handleRowAdd">
                     <i class="fas fa-plus"></i> 新增同仁
@@ -615,6 +604,45 @@ const handleSelectClose = () => {
 .panel2 {
   height: 92vh;
   position: relative;
-  top: -16px;
+  top: 0px;
+  background: #eef7ef;
+  box-shadow: 0px 1px 17px rgba(0, 0, 0, 0.25);
+  border-radius: 30px 30px 0px 0px;
+}
+
+.flipClock {
+  width: 95px;
+  height: 100px;
+  background: none;
+  box-shadow: 0px 6px 7px rgba(0, 0, 0, 0.25);
+  border-radius: 14px;
+}
+
+.inputCus {
+  height: 44px;
+  white-space: nowrap;
+  width: 350px;
+}
+
+.inputDescription {
+  width: 280px;
+  overflow-x: scroll;
+}
+
+.bg-month {
+  background-image: url("../assets/bg-month.svg");
+  background-repeat: no-repeat;
+  background-position: top;
+  border-radius: 0 0 16px 16px;
+}
+.bg-day {
+  background-image: url("../assets/bg-day.svg");
+  background-repeat: no-repeat;
+  background-position: top;
+  border-radius: 0 0 16px 16px;
+}
+.bg-line {
+  background-image: url("../assets/bg-line.svg");
+  background-repeat: no-repeat;
 }
 </style>
