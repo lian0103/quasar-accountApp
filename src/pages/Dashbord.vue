@@ -604,10 +604,11 @@ const handleSelectClose = () => {
 .panel2 {
   height: 92vh;
   position: relative;
-  top: 0px;
+  top: -10px;
   background: #eef7ef;
   box-shadow: 0px 1px 17px rgba(0, 0, 0, 0.25);
   border-radius: 30px 30px 0px 0px;
+  white-space: nowrap;
 }
 
 .flipClock {
