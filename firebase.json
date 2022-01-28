@@ -1,0 +1,6 @@
+{
+    "hosting": {
+      "site": "gt-record-f15e0",
+      "public": "dist/spa"
+    }
+  }
