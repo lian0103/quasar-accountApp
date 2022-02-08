@@ -7,8 +7,11 @@ import { v4 as uuidv4 } from "uuid";
 import { date, useQuasar } from "quasar";
 import { useAppStore } from "../stores/index";
 import html2canvas from "html2canvas";
+import { saveAs } from "file-saver";
 
 const $q = useQuasar();
+
+const isMobile = $q.platform.is.mobile;
 
 const instance = getCurrentInstance();
 
@@ -202,24 +205,26 @@ const handleTitleInfo = () => {
 };
 
 onMounted(() => {
-  gsap.registerPlugin(ScrollTrigger);
+  if (!isMobile) {
+    gsap.registerPlugin(ScrollTrigger);
 
-  gsap.utils.toArray(".panel").forEach((panel, i) => {
-    // console.log(panel);
-    let scrollInstance = ScrollTrigger.create({
-      trigger: panel,
-      start: "top top",
-      pin: true,
-      pinSpacing: false,
-    });
+    gsap.utils.toArray(".panel").forEach((panel, i) => {
+      // console.log(panel);
+      let scrollInstance = ScrollTrigger.create({
+        trigger: panel,
+        start: "top top",
+        pin: true,
+        pinSpacing: false,
+      });
 
-    ScrollTrigger.addEventListener("scrollEnd", (e) => {
-      // console.log("in~~~??",ScrollTrigger)
-      if (!formShow.value && !formShow2.value && !formShowDepInfo.value) {
-        handleTitleInfo();
-      }
+      ScrollTrigger.addEventListener("scrollEnd", (e) => {
+        // console.log("in~~~??",ScrollTrigger)
+        if (!formShow.value && !formShow2.value && !formShowDepInfo.value) {
+          handleTitleInfo();
+        }
+      });
     });
-  });
+  }
 });
 
 const handleSelectClose = () => {
@@ -230,27 +235,17 @@ const handleSelectClose = () => {
 const isCapturing = ref(false);
 
 const generatorImage = () => {
-  // console.log(instance.refs.capture.offsetHeight);
-  // console.log(instance.refs.row1.offsetHeight);
-  // console.log(instance.refs.row2.offsetHeight);
   isCapturing.value = true;
 
   setTimeout(() => {
-    let totalHeight =
-      instance.refs.row1.offsetHeight + instance.refs.row2.offsetHeight;
-    console.log(headTilte, curDepInfo.value);
-
     html2canvas(instance.refs.row2).then((canvas) => {
       isCapturing.value = false;
-      let link = document.createElement("a");
-      link.href = canvas.toDataURL();
-      link.setAttribute(
-        "download",
-        `${curDepInfoDateStr.value} ${curDepInfo.value.depName}.png`
-      );
-      link.style.display = "none";
-      document.body.appendChild(link);
-      link.click();
+      canvas.toBlob((blob) => {
+        saveAs(
+          blob,
+          `${curDepInfoDateStr.value} ${curDepInfo.value.depName}.png`
+        );
+      });
     });
   }, 200);
 };
@@ -322,7 +317,7 @@ const generatorImage = () => {
           </h2>
         </div>
       </div>
-      <div class="row" ref="row2">
+      <div class="row bg-overlay" ref="row2">
         <div class="col-12 text-xl font-Noto">
           <h2
             v-show="isCapturing"
@@ -367,7 +362,7 @@ const generatorImage = () => {
 
             <div class="relative rounded flex flex-col">
               <h2 class="text-base text-primary">同仁異常狀況說明</h2>
-              <div class="overflow-y-scroll">
+              <div class="overflow-y-scroll overflow-x-hidden">
                 <div
                   style="width: 100%"
                   class="my-2 px-0 pt-1 flex flex-col text-black leading-normal text-sm cursor-pointer"
@@ -390,15 +385,20 @@ const generatorImage = () => {
                       <img src="../assets/icon-people.svg" alt="" />
                     </span>
 
-                    <div class="pr-6 text-sm inputDescription font-Noto">
+                    <div
+                      class="pr-4 text-sm inputDescription font-Noto"
+                    >
                       {{ item.description }}
                     </div>
 
-                    <span class="absolute right-3 top-2.5 font-mono">{{
-                      item.relatedList.length > 0
-                        ? "+" + item.relatedList.length
-                        : "+0"
-                    }}</span>
+                    <span
+                      class="absolute right-0 top-2.5 px-1 font-mono bg-white"
+                      >{{
+                        item.relatedList.length > 0
+                          ? "+" + item.relatedList.length
+                          : "+0"
+                      }}</span
+                    >
 
                     <span
                       v-if="item.relatedListShow && !isCapturing"
@@ -466,8 +466,10 @@ const generatorImage = () => {
                   class="inline leading-7"
                   @click="handleRowAdd"
                 >
-                  <img src="../assets/icon-add.svg" alt="" class="pr-2" />
-                  <span>新增同仁</span>
+                  <div class="flex relative right-2">
+                    <img src="../assets/icon-add.svg" alt="" class="pr-1 w-7" />
+                    <span>新增同仁</span>
+                  </div>
                 </q-btn>
                 <q-btn
                   flat
@@ -693,15 +695,17 @@ const generatorImage = () => {
 }
 
 .inputCus {
-  height: 44px;
-  white-space: nowrap;
+  min-height: 44px;
+  max-height: 60px;
+  height: auto;
+  white-space: pre-wrap;
   // width: 350px;
 }
 
 .inputDescription {
-  width: 280px;
-  overflow-x: scroll;
-  padding-right: 10px;
+  width: 320px;
+  // overflow-x: scroll;
+  // padding-right: 10px;
 }
 
 .bg-month {
