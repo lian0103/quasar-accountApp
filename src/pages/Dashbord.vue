@@ -6,6 +6,7 @@ import { depMembers } from "./fakeData";
 import { v4 as uuidv4 } from "uuid";
 import { date, useQuasar } from "quasar";
 import { useAppStore } from "../stores/index";
+import html2canvas from "html2canvas";
 
 const $q = useQuasar();
 
@@ -185,12 +186,16 @@ const handleRowShowMore = (tarItem) => {
   instance.proxy.$forceUpdate();
 };
 
+const curDepInfoDateStr = computed(() => {
+  return `2022年${curDepInfo.value.date?.split("/")[0] || "/"}月${
+    curDepInfo.value.date?.split("/")[1] || "/"
+  }日`;
+});
+
 const handleTitleInfo = () => {
   if (window.scrollY >= 100) {
-    // console.log("in~");
-    headTilte.value = `2022年${curDepInfo.value.date?.split("/")[0] || "/"}月${
-      curDepInfo.value.date?.split("/")[1] || "/"
-    }日`;
+    console.log("in~", curDepInfoDateStr.value);
+    headTilte.value = curDepInfoDateStr.value;
   } else {
     headTilte.value = curDepInfo.value.title;
   }
@@ -220,6 +225,34 @@ onMounted(() => {
 const handleSelectClose = () => {
   // console.log("in,,,handleSelectClose");
   instance.refs.qDateProxy1.hide();
+};
+
+const isCapturing = ref(false);
+
+const generatorImage = () => {
+  // console.log(instance.refs.capture.offsetHeight);
+  // console.log(instance.refs.row1.offsetHeight);
+  // console.log(instance.refs.row2.offsetHeight);
+  isCapturing.value = true;
+
+  setTimeout(() => {
+    let totalHeight =
+      instance.refs.row1.offsetHeight + instance.refs.row2.offsetHeight;
+    console.log(headTilte, curDepInfo.value);
+
+    html2canvas(instance.refs.row2).then((canvas) => {
+      isCapturing.value = false;
+      let link = document.createElement("a");
+      link.href = canvas.toDataURL();
+      link.setAttribute(
+        "download",
+        `${curDepInfoDateStr.value} ${curDepInfo.value.depName}.png`
+      );
+      link.style.display = "none";
+      document.body.appendChild(link);
+      link.click();
+    });
+  }, 200);
 };
 </script>
 
@@ -280,7 +313,7 @@ const handleSelectClose = () => {
     <section
       class="panel panel2 w-full mx-auto mt-4 pb-6 bg-overlay rounded-tl-3xl rounded-tr-3xl"
     >
-      <div class="row">
+      <div class="row" ref="row1" v-show="!isCapturing">
         <div class="col-12 font-Noto">
           <h2
             class="text-center px-4 tracking-wider text-xl text-primary pt-5 pb-4"
@@ -289,8 +322,21 @@ const handleSelectClose = () => {
           </h2>
         </div>
       </div>
-      <div class="row">
-        <div class="col-12">
+      <div class="row" ref="row2">
+        <div class="col-12 text-xl font-Noto">
+          <h2
+            v-show="isCapturing"
+            class="text-center tracking-wider color-font3 cursor-pointer py-0"
+          >
+            {{ curDepInfoDateStr }}
+          </h2>
+          <h2
+            v-show="isCapturing"
+            class="text-center px-4 tracking-wider text-xl text-primary"
+          >
+            {{ curDepInfo.depName }}
+          </h2>
+
           <div class="col-12 col-md-8 px-4 mx-auto">
             <div
               class="relative rounded text-5xl flex flex-nowrap justify-around text-center text-primary"
@@ -321,7 +367,7 @@ const handleSelectClose = () => {
 
             <div class="relative rounded flex flex-col">
               <h2 class="text-base text-primary">同仁異常狀況說明</h2>
-              <div class="h-80 overflow-y-scroll">
+              <div class="overflow-y-scroll">
                 <div
                   style="width: 100%"
                   class="my-2 px-0 pt-1 flex flex-col text-black leading-normal text-sm cursor-pointer"
@@ -330,7 +376,10 @@ const handleSelectClose = () => {
                 >
                   <div
                     class="inputCus flex flex-nowrap relative bg-white py-2.5 rounded-lg"
-                    :style="{ width: item.relatedListShow ? '93%' : '100%' }"
+                    :style="{
+                      width:
+                        item.relatedListShow && !isCapturing ? '93%' : '100%',
+                    }"
                     @click.prevent="
                       () => {
                         handleRowShowMore(item);
@@ -352,7 +401,7 @@ const handleSelectClose = () => {
                     }}</span>
 
                     <span
-                      v-if="item.relatedListShow"
+                      v-if="item.relatedListShow && !isCapturing"
                       class="block text-md text-gray-300 absolute -right-5 top-2.5 font-normal"
                     >
                       <img
@@ -370,7 +419,7 @@ const handleSelectClose = () => {
 
                   <div
                     v-if="item.relatedListShow"
-                    class="inputCus flex flex-nowrap bg-bg1 mt-2 py-2.5 rounded-lg shadow-none cursor-pointer "
+                    class="inputCus flex flex-nowrap bg-bg1 mt-2 py-2.5 rounded-lg shadow-none cursor-pointer"
                     v-for="rItem in item.relatedList"
                     :key="'r' + item.uuid"
                     @click="
@@ -388,6 +437,7 @@ const handleSelectClose = () => {
                     </div>
                   </div>
                   <div
+                    v-show="!isCapturing"
                     class="inputCus flex flex-nowrap bg-bg1 mt-2 py-2.5 rounded-lg shadow-none"
                     v-if="item.relatedListShow"
                   >
@@ -399,17 +449,35 @@ const handleSelectClose = () => {
                         }
                       "
                     >
-                      <img src="../assets/icon-add.svg" alt=""> 新增同住家人
+                      <img src="../assets/icon-add.svg" alt="" /> 新增同住家人
                     </p>
                   </div>
                 </div>
-                <div
-                  class="inputCus mt-3 px-0 pt-1 leading-normal text-primary rounded-lg"
+              </div>
+              <div
+                v-show="!isCapturing"
+                class="inputCus mt-3 px-0 pt-1 text-primary rounded-lg flex leading-9"
+              >
+                <q-btn
+                  flat
+                  outline
+                  rounded
+                  color="primary"
+                  class="inline leading-7"
+                  @click="handleRowAdd"
                 >
-                  <p class="px-2 cursor-pointer flex font-Noto" @click="handleRowAdd">
-                     <img src="../assets/icon-add.svg" alt="" class="pr-2"> 新增同仁
-                  </p>
-                </div>
+                  <img src="../assets/icon-add.svg" alt="" class="pr-2" />
+                  <span>新增同仁</span>
+                </q-btn>
+                <q-btn
+                  flat
+                  outline
+                  rounded
+                  color="primary"
+                  label="螢幕截圖"
+                  class="inline leading-7"
+                  @click="generatorImage"
+                />
               </div>
             </div>
           </div>
@@ -607,6 +675,7 @@ const handleSelectClose = () => {
 
 .panel2 {
   height: 92vh;
+  overflow-y: scroll;
   position: relative;
   top: -10px;
   background: #eef7ef;
