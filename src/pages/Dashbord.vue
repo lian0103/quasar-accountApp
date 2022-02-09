@@ -197,7 +197,7 @@ const curDepInfoDateStr = computed(() => {
 
 const handleTitleInfo = () => {
   if (window.scrollY >= 100) {
-    console.log("in~", curDepInfoDateStr.value);
+    // console.log("in~", curDepInfoDateStr.value);
     headTilte.value = curDepInfoDateStr.value;
   } else {
     headTilte.value = curDepInfo.value.title;
@@ -248,6 +248,20 @@ const generatorImage = () => {
       });
     });
   }, 200);
+};
+
+const removeLocalData = () => {
+  // console.log("in removeLocalData");
+  $q.dialog({
+    title: "回復預設狀況?",
+    message: `目前儲存於瀏覽器的回報資訊將會清空`,
+    cancel: true,
+  }).onOk(() => {
+    localStorage.removeItem("gt_report");
+    localStorage.removeItem("gt_depInfo");
+    appStore.$reset();
+    handleTitleInfo();
+  });
 };
 </script>
 
@@ -385,9 +399,7 @@ const generatorImage = () => {
                       <img src="../assets/icon-people.svg" alt="" />
                     </span>
 
-                    <div
-                      class="pr-4 text-sm inputDescription font-Noto"
-                    >
+                    <div class="pr-4 text-sm inputDescription font-Noto">
                       {{ item.description }}
                     </div>
 
@@ -480,6 +492,15 @@ const generatorImage = () => {
                   class="inline leading-7"
                   @click="generatorImage"
                 />
+                <q-btn
+                  flat
+                  outline
+                  rounded
+                  color="primary"
+                  label="表單重置"
+                  class="inline leading-7"
+                  @click="removeLocalData"
+                />
               </div>
             </div>
           </div>
@@ -509,9 +530,9 @@ const generatorImage = () => {
 
               <q-select
                 v-model="formData.breakType"
-                :options="['病假', '事假', '其他']"
+                :options="['特別休假', '公假', '病假', '事假']"
                 behavior="menu"
-                label="請假別"
+                label="假別"
                 :rules="[handleRules('need')]"
               />
 
@@ -639,6 +660,7 @@ const generatorImage = () => {
                     </q-popup-proxy>
                   </q-icon>
                 </template>
+                <template v-slot:hint> 預設不儲存回報日期 </template>
               </q-input>
 
               <q-input

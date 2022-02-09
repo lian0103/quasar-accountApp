@@ -1,24 +1,3 @@
-export const reportData = [
-  {
-    description: "王XXX 病假 01/26-01/27 中樂透發燒中樂透發燒中樂透發燒",
-    relatedList: ["狀況123", "情況456"],
-  },
-  {
-    description: "李XXX 病假 01/26-01/27 中樂透發燒中樂透發燒中樂透發燒",
-    relatedList: [
-      "OXOX狀況123",
-      "SSKLSK情況456SSKLSK情況456SSKLSK情況456SSKLSK情況456",
-    ],
-  },
-];
-
-export const departmentInfo = {
-  title: "資訊處疫情戰情回報",
-  date: "",
-  peopleNum: "28",
-  peopleList: ["a", "b", "c"],
-};
-
 export const depMembers = [
   "08195 謝宗佑",
   "00102 夏仁泰",

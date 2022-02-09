@@ -1,16 +1,21 @@
 import { defineStore } from "pinia";
+import { date } from "quasar";
 
 export const useAppStore = defineStore({
   id: "app",
   state: () => ({
     leftDrawerOpen: true,
     reportData: JSON.parse(localStorage.getItem("gt_report")) || [],
-    departmentInfo: JSON.parse(localStorage.getItem("gt_depInfo")) || {
-      title: "資訊開發部疫情戰情回報",
-      depName: "資訊開發部",
-      date: "",
-      peopleNum: "28",
-    },
+    departmentInfo: localStorage.getItem("gt_depInfo")
+      ? {
+          ...JSON.parse(localStorage.getItem("gt_depInfo")),
+          date: date.formatDate(new Date(), "MM/DD"),
+        }
+      : {
+          title: "資訊處",
+          depName: "資訊處",
+          date: date.formatDate(new Date(), "MM/DD"),
+        },
   }),
   getters: {
     getReportData(state) {
@@ -34,7 +39,12 @@ export const useAppStore = defineStore({
       this.departmentInfo = {
         ...depInfoData,
       };
-      localStorage.setItem("gt_depInfo", JSON.stringify(depInfoData));
+
+      let obj = { ...depInfoData };
+      delete obj.date;
+      // console.log(obj);
+
+      localStorage.setItem("gt_depInfo", JSON.stringify(obj));
     },
   },
 });
