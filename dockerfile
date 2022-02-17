@@ -2,7 +2,10 @@ FROM node:12.22.1-alpine
 
 WORKDIR /app
 
-COPY . .
+COPY package.json .
+
+#for hot reload setting
+COPY quasar.conf.js . 
 
 RUN npm install
 
