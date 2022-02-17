@@ -1,0 +1,20 @@
+version: "3"
+services:
+  node:
+    build:
+      context: .
+      args:
+        NODE_VERSION: 12.22.1-alpine
+    container_name: node12App_c
+    volumes:
+      - .:/app
+      - /app/node_modules
+    ports:
+      - "8080:8080"
+    working_dir: /app
+    command: npm run dev
+    privileged: true
+    tty: true
+    stdin_open: true
+    environment:
+      - CHOKIDAR_USEPOLLING=true
