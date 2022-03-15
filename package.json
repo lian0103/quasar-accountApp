@@ -10,7 +10,9 @@
     "build": "quasar build",
     "build:pwa": "quasar build -m pwa",
     "lint": "eslint --ext .js,.vue ./",
-    "test": "echo \"No test specified\" && exit 0"
+    "test": "echo \"No test specified\" && exit 0",
+    "dev:electron": "quasar dev -m electron",
+    "build:electron": "quasar build -m electron"
   },
   "dependencies": {
     "@quasar/extras": "^1.0.0",
@@ -34,6 +36,8 @@
     "@babel/eslint-parser": "^7.13.14",
     "@quasar/app": "^3.0.0",
     "@quasar/vite-plugin": "^1.0.4",
+    "electron": "^17.1.2",
+    "electron-packager": "^15.4.0",
     "eslint": "^7.14.0",
     "eslint-config-standard": "^16.0.2",
     "eslint-plugin-import": "^2.19.1",
