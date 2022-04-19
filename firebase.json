@@ -1,6 +1,6 @@
 {
     "hosting": {
-      "site": "gt-record-f15e0",
+      "site": "gt-prevent-record",
       "public": "dist/spa"
     }
   }
