@@ -1,6 +1,6 @@
 const functions = require("firebase-functions");
-
 const admin = require("firebase-admin");
+
 admin.initializeApp();
 
 exports.helloWorld = functions.https.onRequest((request, response) => {
@@ -8,35 +8,16 @@ exports.helloWorld = functions.https.onRequest((request, response) => {
   response.send("Hello from Firebase!");
 });
 
-exports.addMessage = functions.https.onRequest(async (req, res) => {
-  // Grab the text parameter.
-  const original = req.query.text;
-  // Push the new message into Firestore using the Firebase Admin SDK.
-  const writeResult = await admin
-    .firestore()
-    .collection("messages")
-    .add({ original: original });
-  // Send back a message that we've successfully written the message
-  res.json({ result: `Message with ID: ${writeResult.id} added.` });
+//auth trigger & record
+exports.userSignup = functions.auth.user().onCreate((user) => {
+  return admin.firestore().collection("users").doc(user.uid).set({
+    email: user.email,
+    permissions: [],
+  });
 });
 
-exports.makeUppercase = functions.firestore
-  .document("/messages/{documentId}")
-  .onCreate((snap, context) => {
-    // Grab the current value of what was written to Firestore.
-    const original = snap.data().original;
+exports.userDelete = functions.auth.user().onDelete((user) => {
+  const doc = admin.firestore().collection("users").doc(user.uid);
 
-    // Access the parameter `{documentId}` with `context.params`
-    functions.logger.log("Uppercasing", context.params.documentId, original);
-
-    const uppercase = original.toUpperCase();
-
-    // You must return a Promise when performing asynchronous tasks inside a Functions such as
-    // writing to Firestore.
-    // Setting an 'uppercase' field in Firestore document returns a Promise.
-    return snap.ref.set({ uppercase }, { merge: true });
-  });
-
-exports.sayHi = functions.https.onCall((data, context) => {
-  return "hi~~~~~~~~";
+  return doc.delete();
 });
