@@ -36,3 +36,7 @@ exports.makeUppercase = functions.firestore
     // Setting an 'uppercase' field in Firestore document returns a Promise.
     return snap.ref.set({ uppercase }, { merge: true });
   });
+
+exports.sayHi = functions.https.onCall((data, context) => {
+  return "hi~~~~~~~~";
+});
