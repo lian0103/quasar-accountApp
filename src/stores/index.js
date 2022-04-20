@@ -1,10 +1,2 @@
-import { defineStore } from "pinia";
-
-export const useAppStore = defineStore({
-  id: "app",
-  state: () => ({
-    leftDrawerOpen:true,
-  }),
-  getters: {},
-  actions: {},
-});
+export { useAppStore } from "./modules/app";
+export { useUserStore } from "./modules/user";
