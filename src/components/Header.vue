@@ -20,7 +20,7 @@ const toggleLeftDrawer = () => {
           alt=""
         />
         <div class="py-4 cursor-pointer w-40" @click="$router.push({ path: '/' })">
-          預約後台
+          預約服務
         </div>
         <q-btn dense flat icon="menu" @click="toggleLeftDrawer" />
       </q-toolbar-title>

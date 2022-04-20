@@ -29,6 +29,11 @@ const $router = useRouter();
             >使用者清單</q-item-section
           >
         </q-item>
+        <q-item clickable v-close-popup>
+          <q-item-section @click="$router.push({ path: '/role' })"
+            >角色權限</q-item-section
+          >
+        </q-item>
       </q-list>
     </q-drawer>
     <q-page-container>

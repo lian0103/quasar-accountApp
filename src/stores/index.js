@@ -1,2 +1,3 @@
 export { useAppStore } from "./modules/app";
 export { useUserStore } from "./modules/user";
+export { useRoleStore } from "./modules/role";
