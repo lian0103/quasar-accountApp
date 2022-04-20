@@ -10,18 +10,15 @@ export const useUserStore = defineStore({
     getUserlist: (state) => state.userlist,
   },
   actions: {
-    setUserlist() {
-      return new Promise((resolv, reject) => {
-        getUserData()
-          .then((res) => {
-            console.log(res);
-            this.userlist = res;
-            resolv(true);
-          })
-          .catch((err) => {
-            reject(false);
-          });
-      });
+    initUserlistListning(){
+      return new Promise((resolv,reject)=>{
+        getUserData().then(()=>{
+          resolv(true);
+        })
+      })
+    },
+    setUserlist(data) {
+      this.userlist = [...data];
     },
   },
 });

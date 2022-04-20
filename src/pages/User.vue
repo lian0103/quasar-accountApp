@@ -30,7 +30,7 @@ const columns = [
     label: "角色id",
     align: "left",
     field: (row) => row.roles,
-    format: (arr) => arr.join(","),
+    format: (arr) => arr?.join(","),
   },
   {
     name: "btns",
@@ -52,7 +52,7 @@ const handleRowDelete = (row) => {
 onMounted(() => {
   if (UserStore.getUserlist.length == 0) {
     loading.value = true;
-    UserStore.setUserlist().then((res) => {
+    UserStore.initUserlistListning().then((res) => {
       loading.value = false;
     });
   }

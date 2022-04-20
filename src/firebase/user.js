@@ -1,13 +1,21 @@
-import { collection, getDocs } from "firebase/firestore";
+import { collection, getDocs, onSnapshot } from "firebase/firestore";
+import { useUserStore } from "src/stores";
 import { db } from "./index";
 
 export const getUserData = async () => {
-//   console.log("in~~~");
-  const snapshot = await getDocs(collection(db, "users"));
-  return snapshot.docs.map((doc) => {
-      return {
+  return new Promise((resolv, reject) => {
+    const UserStore = useUserStore();
+    let arr = [];
+    onSnapshot(collection(db, "users"), (snapshot) => {
+      arr = snapshot.docs.map((doc) => {
+        return {
           ...doc.data(),
-          uid:doc.id
-      }
+          uid: doc.id,
+        };
+      });
+      console.log(arr);
+      UserStore.setUserlist(arr);
+      resolv(true);
+    });
   });
 };
