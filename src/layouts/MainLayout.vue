@@ -14,16 +14,19 @@ const $router = useRouter();
     <q-drawer
       show-if-above
       v-model="appStore.$state.leftDrawerOpen"
+      :width="220"
       side="left"
       bordered
     >
       <q-list style="min-width: 80px">
         <q-item clickable v-close-popup>
-          <q-item-section @click="() => {}"> item A</q-item-section>
+          <q-item-section @click="$router.push({ path: '/' })">
+            後台狀態</q-item-section
+          >
         </q-item>
         <q-item clickable v-close-popup>
-          <q-item-section @click="$router.push({ path: '/' })"
-            >item B</q-item-section
+          <q-item-section @click="$router.push({ path: '/user' })"
+            >使用者清單</q-item-section
           >
         </q-item>
       </q-list>

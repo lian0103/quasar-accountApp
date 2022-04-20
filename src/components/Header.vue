@@ -13,16 +13,16 @@ const toggleLeftDrawer = () => {
 <template>
   <q-header class="header" elevated>
     <q-toolbar>
-      <q-toolbar-title class="flex">
-        <q-btn dense flat icon="menu" @click="toggleLeftDrawer" />
+      <q-toolbar-title class="flex items-center">
         <img
-          class="rounded-full w-12 h-12 m-2 justify-center"
+          class="rounded-full w-8 h-8 m-2 justify-center"
           src="../assets/quasar-logo-vertical.svg"
           alt=""
         />
-        <div class="py-4 cursor-pointer" @click="$router.push({ path: '/' })">
-          HeadTitle
+        <div class="py-4 cursor-pointer w-40" @click="$router.push({ path: '/' })">
+          預約後台
         </div>
+        <q-btn dense flat icon="menu" @click="toggleLeftDrawer" />
       </q-toolbar-title>
 
       <div class="px-2">v0.0.1</div>
