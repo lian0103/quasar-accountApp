@@ -1,7 +1,8 @@
 <script setup>
 import { useRouter } from "vue-router";
-import { useUserStore } from "./stores/index";
+import { useUserStore, useStadiumStore } from "./stores/index";
 const UserStore = useUserStore();
+const StadiumStore = useStadiumStore();
 const $router = useRouter();
 
 $router.beforeEach(async (to, from, next) => {
@@ -10,7 +11,9 @@ $router.beforeEach(async (to, from, next) => {
   if (path == "/service") {
     if (UserStore.getUserlist.length == 0) {
       await UserStore.initUserlistListning();
-      next();
+    }
+    if (StadiumStore.getStadiumlist.length == 0) {
+      await StadiumStore.initStadiumlistListning();
     }
   }
 

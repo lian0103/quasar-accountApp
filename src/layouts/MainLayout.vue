@@ -39,6 +39,11 @@ const $router = useRouter();
             >服務項目</q-item-section
           >
         </q-item>
+        <q-item clickable v-close-popup>
+          <q-item-section @click="$router.push({ path: '/stadium' })"
+            >場地清單</q-item-section
+          >
+        </q-item>
       </q-list>
     </q-drawer>
     <q-page-container>

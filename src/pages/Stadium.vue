@@ -1,64 +1,43 @@
 <script setup>
-import {
-  useServiceStore,
-  useUserStore,
-  useStadiumStore,
-} from "../stores/index";
+import { useStadiumStore } from "../stores/index";
 import { onMounted, ref } from "vue";
 
-const ServiceStore = useServiceStore();
-const UserStore = useUserStore();
 const StadiumStore = useStadiumStore();
+
 const loading = ref(false);
 const rows = ref([]);
 
 const columns = [
   {
     name: "id",
-    label: "服務id",
+    label: "場館id",
     align: "left",
     field: (row) => row.id,
   },
   {
     name: "name",
-    label: "服務名稱",
+    label: "場館名稱",
     align: "left",
     field: (row) => row.name,
   },
   {
-    name: "server",
-    label: "提供者",
+    name: "address",
+    label: "地址",
     align: "left",
-    field: (row) => row.server,
+    field: (row) => row.address,
+  },
+  {
+    name: "opneHour",
+    label: "開放時間",
+    align: "left",
+    field: (row) => row.opneHour,
+  },
+  {
+    name: "rooms",
+    label: "場地",
+    align: "left",
+    field: (row) => row.rooms,
     format: (arr) => arr?.join(","),
-  },
-  {
-    name: "attendent",
-    label: "參加者",
-    align: "left",
-    field: (row) => row.attendent,
-    format: (arr) => {
-      return arr.map((uid) => {
-        let name =
-          UserStore.getUserlist.filter((item) => item.uid === uid)[0].name ||
-          uid;
-        return name;
-      });
-    },
-  },
-  {
-    name: "stadium",
-    label: "場館",
-    align: "left",
-    field: (row) => row.stadium,
-    format: (stadium) =>
-      StadiumStore.getStadiumlist.filter((item) => item.id == stadium)[0]?.name || stadium,
-  },
-  {
-    name: "price",
-    label: "價格",
-    align: "left",
-    field: (row) => row.price,
   },
   {
     name: "desc",
@@ -84,9 +63,9 @@ const handleRowDelete = (row) => {
 };
 
 onMounted(() => {
-  if (ServiceStore.getServicelist.length == 0) {
+  if (StadiumStore.getStadiumlist.length == 0) {
     loading.value = true;
-    ServiceStore.initServicelistListning().then((res) => {
+    StadiumStore.initStadiumlistListning().then((res) => {
       loading.value = false;
     });
   }
@@ -101,7 +80,7 @@ onMounted(() => {
     </div>
     <div class="q-pa-md">
       <q-table
-        :rows="ServiceStore.getServicelist"
+        :rows="StadiumStore.getStadiumlist"
         :columns="columns"
         row-key="uid"
         :loading="loading"
