@@ -1,36 +1,64 @@
 <script setup>
-import { useUserStore } from "../stores/index";
+import { useServiceStore, useUserStore } from "../stores/index";
 import { onMounted, ref } from "vue";
 
+const ServiceStore = useServiceStore();
 const UserStore = useUserStore();
 const loading = ref(false);
 const rows = ref([]);
 
 const columns = [
   {
-    name: "uid",
-    label: "使用者id",
+    name: "id",
+    label: "服務id",
     align: "left",
-    field: (row) => row.uid,
+    field: (row) => row.id,
   },
   {
     name: "name",
-    label: "姓名",
+    label: "服務名稱",
     align: "left",
     field: (row) => row.name,
   },
   {
-    name: "email",
-    label: "信箱",
+    name: "server",
+    label: "提供者",
     align: "left",
-    field: (row) => row.email,
+    field: (row) => row.server,
+    format: (arr) => arr?.join(","),
   },
   {
-    name: "roles",
-    label: "角色id",
+    name: "attendent",
+    label: "參加者",
     align: "left",
-    field: (row) => row.roles,
-    format: (arr) => arr?.join(","),
+    field: (row) => row.attendent,
+    format: (arr) => {
+      return arr.map((uid) => {
+        let name =
+          UserStore.getUserlist.filter((item) => item.uid === uid)[0].name ||
+          uid;
+        return name;
+      });
+    },
+  },
+  {
+    name: "stadium",
+    label: "場館",
+    align: "left",
+    field: (row) => row.stadium,
+    format: (stadium) => stadium,
+  },
+  {
+    name: "price",
+    label: "價格",
+    align: "left",
+    field: (row) => row.price,
+  },
+  {
+    name: "desc",
+    label: "描述",
+    align: "left",
+    field: (row) => row.desc,
   },
   {
     name: "btns",
@@ -50,9 +78,9 @@ const handleRowDelete = (row) => {
 };
 
 onMounted(() => {
-  if (UserStore.getUserlist.length == 0) {
+  if (ServiceStore.getServicelist.length == 0) {
     loading.value = true;
-    UserStore.initUserlistListning().then((res) => {
+    ServiceStore.initServicelistListning().then((res) => {
       loading.value = false;
     });
   }
@@ -61,18 +89,13 @@ onMounted(() => {
 
 <template>
   <div class="p-2">
-    <h2 class="font-2xl font-Oswald-500">使用者</h2>
+    <h2 class="font-2xl font-Oswald-500">服務列表</h2>
     <div class="flex justify-end px-4">
-      <q-btn
-        color="primary"
-        size="sm"
-        label="新增使用者"
-        @click="handleRowAdd"
-      />
+      <q-btn color="primary" size="sm" label="新增服務" @click="handleRowAdd" />
     </div>
     <div class="q-pa-md">
       <q-table
-        :rows="UserStore.getUserlist"
+        :rows="ServiceStore.getServicelist"
         :columns="columns"
         row-key="uid"
         :loading="loading"

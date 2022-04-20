@@ -34,6 +34,11 @@ const $router = useRouter();
             >角色權限</q-item-section
           >
         </q-item>
+        <q-item clickable v-close-popup>
+          <q-item-section @click="$router.push({ path: '/service' })"
+            >服務項目</q-item-section
+          >
+        </q-item>
       </q-list>
     </q-drawer>
     <q-page-container>
