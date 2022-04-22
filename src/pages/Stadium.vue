@@ -73,8 +73,8 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="p-2">
-    <h2 class="font-2xl font-Oswald-500">服務列表</h2>
+  <q-page>
+    <h2 class="font-2xl font-Oswald-500 px-4">服務列表</h2>
     <div class="flex justify-end px-4">
       <q-btn color="primary" size="sm" label="新增服務" @click="handleRowAdd" />
     </div>
@@ -115,5 +115,5 @@ onMounted(() => {
         </template>
       </q-table>
     </div>
-  </div>
+  </q-page>
 </template>

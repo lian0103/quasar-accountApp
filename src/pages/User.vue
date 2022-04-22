@@ -145,8 +145,8 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="p-2">
-    <h2 class="font-2xl font-Oswald-500">使用者</h2>
+  <q-page>
+    <h2 class="font-2xl font-Oswald-500 px-4">使用者</h2>
     <div class="flex justify-end px-4">
       <q-btn
         color="primary"
@@ -270,5 +270,5 @@ onMounted(() => {
         </q-card>
       </q-dialog>
     </div>
-  </div>
+  </q-page>
 </template>

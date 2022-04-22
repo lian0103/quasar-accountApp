@@ -3,8 +3,8 @@ import {
   useServiceStore,
   useUserStore,
   useStadiumStore,
-} from "../stores/index";
-import { onMounted, ref } from "vue";
+} from '../stores/index';
+import { onMounted, ref } from 'vue';
 
 const ServiceStore = useServiceStore();
 const UserStore = useUserStore();
@@ -14,28 +14,28 @@ const rows = ref([]);
 
 const columns = [
   {
-    name: "id",
-    label: "服務id",
-    align: "left",
+    name: 'id',
+    label: '服務id',
+    align: 'left',
     field: (row) => row.id,
   },
   {
-    name: "name",
-    label: "服務名稱",
-    align: "left",
+    name: 'name',
+    label: '服務名稱',
+    align: 'left',
     field: (row) => row.name,
   },
   {
-    name: "server",
-    label: "提供者",
-    align: "left",
+    name: 'server',
+    label: '提供者',
+    align: 'left',
     field: (row) => row.server,
-    format: (arr) => arr?.join(","),
+    format: (arr) => arr?.join(','),
   },
   {
-    name: "attendent",
-    label: "參加者",
-    align: "left",
+    name: 'attendent',
+    label: '參加者',
+    align: 'left',
     field: (row) => row.attendent,
     format: (arr) => {
       return arr.map((uid) => {
@@ -47,29 +47,30 @@ const columns = [
     },
   },
   {
-    name: "stadium",
-    label: "場館",
-    align: "left",
+    name: 'stadium',
+    label: '場館',
+    align: 'left',
     field: (row) => row.stadium,
     format: (stadium) =>
-      StadiumStore.getStadiumlist.filter((item) => item.id == stadium)[0]?.name || stadium,
+      StadiumStore.getStadiumlist.filter((item) => item.id == stadium)[0]
+        ?.name || stadium,
   },
   {
-    name: "price",
-    label: "價格",
-    align: "left",
+    name: 'price',
+    label: '價格',
+    align: 'left',
     field: (row) => row.price,
   },
   {
-    name: "desc",
-    label: "描述",
-    align: "left",
+    name: 'desc',
+    label: '描述',
+    align: 'left',
     field: (row) => row.desc,
   },
   {
-    name: "btns",
-    label: "操作",
-    align: "center",
+    name: 'btns',
+    label: '操作',
+    align: 'center',
   },
 ];
 
@@ -94,8 +95,8 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="p-2">
-    <h2 class="font-2xl font-Oswald-500">服務列表</h2>
+  <q-page>
+    <h2 class="font-2xl font-Oswald-500 px-4">服務列表</h2>
     <div class="flex justify-end px-4">
       <q-btn color="primary" size="sm" label="新增服務" @click="handleRowAdd" />
     </div>
@@ -136,5 +137,5 @@ onMounted(() => {
         </template>
       </q-table>
     </div>
-  </div>
+  </q-page>
 </template>
