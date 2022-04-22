@@ -4,6 +4,8 @@ import {
   onSnapshot,
   doc,
   setDoc,
+  updateDoc,
+  deleteDoc,
   addDoc,
   serverTimestamp,
 } from 'firebase/firestore';
@@ -22,7 +24,7 @@ export const getUserData = async () => {
           uid: doc.id,
         };
       });
-      console.log(arr);
+      // console.log(arr);
       UserStore.setUserlist(arr);
       resolv(true);
     });
@@ -34,11 +36,33 @@ export const setUserInfo = (params) => {
     ...params,
     created: serverTimestamp(),
   };
-  console.log(params);
+  // console.log(params);
   return new Promise(async (resolv, reject) => {
     const docRef = doc(db, 'users', params.docId);
     delete params['docId'];
     await setDoc(docRef, params);
+    resolv(true);
+  });
+};
+
+export const updateUserInfo = (params) => {
+  params = {
+    ...params,
+    updated: serverTimestamp(),
+  };
+
+  return new Promise(async (resolv, reject) => {
+    const docRef = doc(db, 'users', params.uid);
+    delete params['uid'];
+    await updateDoc(docRef, params);
+    resolv(true);
+  });
+};
+
+export const deleteUser = (params) => {
+  return new Promise(async (resolv, reject) => {
+    const docRef = doc(db, 'users', params.uid);
+    await deleteDoc(docRef, params);
     resolv(true);
   });
 };

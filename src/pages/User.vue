@@ -2,8 +2,10 @@
 import { useUserStore, useRoleStore } from '../stores/index';
 import { onMounted, ref, reactive } from 'vue';
 import { createUser } from '../firebase/auth';
-import { setUserInfo } from '../firebase/user';
+import { useQuasar } from 'quasar';
+import { setUserInfo, updateUserInfo, deleteUser } from '../firebase/user';
 
+const $q = useQuasar();
 const UserStore = useUserStore();
 const RoleStore = useRoleStore();
 const loading = ref(false);
@@ -11,6 +13,7 @@ const rows = ref([]);
 const dialogData = reactive({
   show: false,
   mode: 'ADD',
+  errMsg: '',
   form: {
     name: '',
     password: '',
@@ -50,7 +53,7 @@ const columns = [
   {
     name: 'btns',
     label: '操作',
-    align: 'center',
+    align: 'left',
   },
 ];
 
@@ -62,35 +65,73 @@ const handleRowAdd = () => {
 const handleAddEditForm = () => {
   switch (dialogData.mode) {
     case 'ADD': {
-      createUser(dialogData.form).then((res) => {
-        console.log('created res',res.uid)
-        let params = {
-          ...dialogData.form,
-          docId:res.uid
-        }
-        setUserInfo(params).then((res) => {
-          dialogData.show = false;
-          dialogData.form = {
-            name: '',
-            password: '',
-            password2: '',
-            email: '',
-            roles: [],
+      createUser(dialogData.form)
+        .then((res) => {
+          // console.log('created res', res.uid);
+          let params = {
+            ...dialogData.form,
+            docId: res.uid,
           };
+          setUserInfo(params).then((res) => {
+            dialogData.show = false;
+            dialogData.errMsg = '';
+            dialogData.form = {
+              name: '',
+              password: '',
+              password2: '',
+              email: '',
+              roles: [],
+            };
+          });
+        })
+        .catch((err) => {
+          // console.log(err.message);
+          dialogData.errMsg = err.message;
         });
-      });
 
+      break;
+    }
+    case 'EDIT': {
+      let params = {
+        ...dialogData.form,
+        roles: dialogData.form.roles.filter((item) => item),
+      };
+
+      updateUserInfo(params).then((res) => {
+        dialogData.show = false;
+        dialogData.errMsg = '';
+        dialogData.form = {
+          name: '',
+          password: '',
+          password2: '',
+          email: '',
+          roles: [],
+        };
+      });
       break;
     }
   }
 };
 
 const handleRowEdit = (row) => {
-  console.log(row);
+  // console.log(row);
+  dialogData.show = true;
+  dialogData.mode = 'EDIT';
+  dialogData.form = {
+    ...row,
+  };
 };
 
 const handleRowDelete = (row) => {
-  console.log(row);
+  // console.log(row);
+  $q.dialog({
+    title: 'DELETE',
+    message: `刪除會員${row.name}?`,
+    cancel: true,
+  }).onOk(() => {
+    deleteUser(row);
+    dialogData.show = false;
+  });
 };
 
 onMounted(() => {
@@ -137,6 +178,7 @@ onMounted(() => {
               "
             />
             <q-btn
+              v-if="!props.row.roles.includes('admin')"
               class="ml-2"
               color="negative"
               size="sm"
@@ -159,7 +201,7 @@ onMounted(() => {
           </q-card-section>
 
           <q-card-section class="q-pt-none">
-            <q-form @submit="handleAddEditForm" class="q-gutter-md">
+            <q-form @submit="handleAddEditForm" class="q-gutter-md relative">
               <q-input
                 dense
                 v-model="dialogData.form.name"
@@ -190,6 +232,7 @@ onMounted(() => {
               <q-input
                 dense
                 v-model="dialogData.form.email"
+                :disable="dialogData.mode == 'EDIT'"
                 :label="
                   columns.filter((cItem) => cItem.name == 'email')[0].label
                 "
@@ -201,13 +244,23 @@ onMounted(() => {
 
               <q-select
                 v-model="dialogData.form.roles"
-                :options="RoleStore.getRolelist.map((item) => item.id)"
+                :options="
+                  RoleStore.getRolelist
+                    .map((item) => item.id)
+                    .filter((id) => id != 'admin')
+                "
+                multiple
                 behavior="menu"
                 :label="
                   columns.filter((cItem) => cItem.name == 'roles')[0].label
                 "
               />
-
+              <p
+                v-if="dialogData.errMsg"
+                class="text-red-600 absolute left-0 bottom-0"
+              >
+                {{ dialogData.errMsg }}
+              </p>
               <q-card-actions align="right" class="text-primary">
                 <q-btn flat label="取消" v-close-popup />
                 <q-btn flat label="確定" type="submit" />
