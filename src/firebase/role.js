@@ -24,7 +24,7 @@ export const getRoleData = async () => {
           id: doc.id,
         };
       });
-      console.log(arr);
+      // console.log(arr);
       RoleStore.setRolelist(arr);
       resolv(true);
     });

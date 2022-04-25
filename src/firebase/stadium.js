@@ -13,7 +13,7 @@ export const getStadiumData = async () => {
           id: doc.id,
         };
       });
-      console.log(arr);
+      // console.log(arr);
       StadiumStore.setStadiumlist(arr);
       resolv(true);
     });
