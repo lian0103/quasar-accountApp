@@ -1,10 +1,10 @@
 <script setup>
-import { useUserStore, useRoleStore } from "../stores/index";
+import { useUserStore, useRoleStore } from "../../stores/index";
 import { onMounted, ref, reactive } from "vue";
-import { createUser } from "../firebase/auth";
+import { createUser } from "../../firebase/auth";
 import { useQuasar } from "quasar";
-import { setUserInfo, updateUserInfo, deleteUser } from "../firebase/user";
-import { parseFireStoreTimeStamp } from "../utils";
+import { setUserInfo, updateUserInfo, deleteUser } from "../../firebase/user";
+import { parseFireStoreTimeStamp } from "../../utils";
 
 const $q = useQuasar();
 const UserStore = useUserStore();

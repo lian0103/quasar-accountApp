@@ -1,9 +1,9 @@
 <script setup>
-import { useRoleStore } from "../stores/index";
-import { postRole, updateRole, deleteRole } from "../firebase/role";
+import { useRoleStore } from "../../stores/index";
+import { postRole, updateRole, deleteRole } from "../../firebase/role";
 import { onMounted, ref, reactive } from "vue";
 import { useQuasar } from "quasar";
-import { parseFireStoreTimeStamp } from "../utils";
+import { parseFireStoreTimeStamp } from "../../utils";
 
 const $q = useQuasar();
 const RoleStore = useRoleStore();

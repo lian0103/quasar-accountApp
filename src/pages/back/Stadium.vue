@@ -1,13 +1,13 @@
 <script setup>
-import { useStadiumStore } from "../stores/index";
+import { useStadiumStore } from "../../stores/index";
 import { onMounted, ref, reactive } from "vue";
 import {
   postStadium,
   updateStadiumInfo,
   deleteStadium,
-} from "../firebase/stadium";
+} from "../../firebase/stadium";
 import { useQuasar } from "quasar";
-import { parseFireStoreTimeStamp } from "../utils";
+import { parseFireStoreTimeStamp } from "../../utils";
 
 const $q = useQuasar();
 const StadiumStore = useStadiumStore();

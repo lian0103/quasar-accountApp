@@ -20,7 +20,7 @@ const $router = useRouter();
     >
       <q-list style="min-width: 80px">
         <q-item clickable v-close-popup>
-          <q-item-section @click="$router.push({ path: '/' })">
+          <q-item-section @click="$router.push({ path: '/dashbord' })">
             後台狀態</q-item-section
           >
         </q-item>
@@ -54,6 +54,6 @@ const $router = useRouter();
 
 <style scoped lang="scss">
 .header {
-  background-color: $info;
+  background-color: $positive;
 }
 </style>

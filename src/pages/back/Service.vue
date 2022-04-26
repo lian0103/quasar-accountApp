@@ -3,15 +3,15 @@ import {
   useServiceStore,
   useUserStore,
   useStadiumStore,
-} from "../stores/index";
+} from "../../stores/index";
 import {
   postService,
   updateServiceInfo,
   deleteService,
-} from "../firebase/service";
+} from "../../firebase/service";
 import { onMounted, ref, reactive } from "vue";
 import { useQuasar } from "quasar";
-import { parseFireStoreTimeStamp } from "../utils";
+import { parseFireStoreTimeStamp } from "../../utils";
 
 const $q = useQuasar();
 const ServiceStore = useServiceStore();
