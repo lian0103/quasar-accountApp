@@ -34,14 +34,14 @@ const handleSignInOut = () => {
       <q-toolbar-title class="flex items-center">
         <img
           class="rounded-full w-8 h-8 m-2 justify-center"
-          src="../assets/quasar-logo-vertical.svg"
+          src="../assets/cat4.gif"
           alt=""
         />
         <div
-          class="py-4 cursor-pointer md:w-40"
+          class="py-4 text-lg cursor-pointer md:w-40"
           @click="$router.push({ path: '/' })"
         >
-          預約服務
+          預約平台
         </div>
         <q-btn dense flat icon="menu" @click="toggleLeftDrawer" />
       </q-toolbar-title>

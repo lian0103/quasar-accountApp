@@ -74,8 +74,8 @@ const handleGoogle = () => {
         align="justify"
         narrow-indicator
       >
-        <q-tab name="login" label="Login" />
-        <q-tab name="signup" label="Signup" />
+        <q-tab name="login" label="登入" />
+        <q-tab name="signup" label="註冊" />
       </q-tabs>
 
       <q-tab-panels v-model="userStore.pageTab" animated>
@@ -87,7 +87,7 @@ const handleGoogle = () => {
             <div class="left w-full relative">
               <q-input
                 v-model="formLogin.email"
-                label="E-mail"
+                label="電子信箱"
                 clearable
                 :rules="[
                   (val) => !!val || '必填',
@@ -99,7 +99,7 @@ const handleGoogle = () => {
               <q-input
                 maxlength="12"
                 v-model="formLogin.psw"
-                label="Password"
+                label="密碼"
                 type="password"
                 clearable
                 :rules="[(val) => !!val || '必填']"
@@ -131,7 +131,7 @@ const handleGoogle = () => {
             <div class="left w-full relative">
               <q-input
                 v-model.number="formSignup.email"
-                label="E-mail"
+                label="電子信箱"
                 clearable
                 :rules="[
                   (val) => !!val || '必填',
@@ -143,7 +143,7 @@ const handleGoogle = () => {
               <q-input
                 maxlength="12"
                 v-model.number="formSignup.psw1"
-                label="Password"
+                label="密碼"
                 type="password"
                 clearable
                 :rules="[(val) => !!val || '必填']"
@@ -154,7 +154,7 @@ const handleGoogle = () => {
                 maxlength="12"
                 v-model.number="formSignup.psw2"
                 type="password"
-                label="Comfirm Password"
+                label="密碼確認"
                 :rules="[
                   (val) => !!val || '必填',
                   (val) => formSignup.psw1 == formSignup.psw2 || '密碼不一致',
