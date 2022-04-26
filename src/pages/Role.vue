@@ -1,8 +1,9 @@
 <script setup>
-import { useRoleStore } from '../stores/index';
-import { postRole, updateRole, deleteRole } from '../firebase/role';
-import { onMounted, ref, reactive } from 'vue';
-import { useQuasar } from 'quasar';
+import { useRoleStore } from "../stores/index";
+import { postRole, updateRole, deleteRole } from "../firebase/role";
+import { onMounted, ref, reactive } from "vue";
+import { useQuasar } from "quasar";
+import { parseFireStoreTimeStamp } from "../utils";
 
 const $q = useQuasar();
 const RoleStore = useRoleStore();
@@ -10,66 +11,72 @@ const loading = ref(false);
 const rows = ref([]);
 const dialogData = reactive({
   show: false,
-  mode: 'ADD',
-  errMsg: '',
+  mode: "ADD",
+  errMsg: "",
   form: {
-    id: '',
-    name: '',
+    id: "",
+    name: "",
     permissions: [],
   },
 });
 
 const permissionItemNameMap = {
-  userAdd: '使用者新增',
-  userDelete: '使用者刪除',
-  userEdit: '使用者編輯',
-  serviceDelete: '服務刪除',
-  serviceAdd: '服務新增',
-  serviceEdit: '服務編輯',
-  roleAdd: '角色新增',
-  roleEdit: '角色編輯',
-  roleDelete: '角色刪除',
+  userAdd: "使用者新增",
+  userDelete: "使用者刪除",
+  userEdit: "使用者編輯",
+  serviceDelete: "服務刪除",
+  serviceAdd: "服務新增",
+  serviceEdit: "服務編輯",
+  roleAdd: "角色新增",
+  roleEdit: "角色編輯",
+  roleDelete: "角色刪除",
 };
 
 const columns = [
   {
-    name: 'id',
-    label: '角色id',
-    align: 'left',
+    name: "id",
+    label: "角色id",
+    align: "left",
     field: (row) => row.id,
   },
   {
-    name: 'name',
-    label: '角色名稱',
-    align: 'left',
+    name: "name",
+    label: "角色名稱",
+    align: "left",
     field: (row) => row.name,
   },
   {
-    name: 'permissions',
-    label: '權限項目',
-    align: 'left',
+    name: "permissions",
+    label: "權限項目",
+    align: "left",
     field: (row) =>
       row.permissions
         ?.map((item) => permissionItemNameMap[item] || item)
         .filter((item) => item) || [],
-    format: (arr) => arr?.join(','),
+    format: (arr) => arr?.join(","),
   },
   {
-    name: 'btns',
-    label: '操作',
-    align: 'left',
+    name: "time",
+    label: "新增/更新時間",
+    align: "left",
+    field: (row) => parseFireStoreTimeStamp(row.updated || row.created),
+  },
+  {
+    name: "btns",
+    label: "操作",
+    align: "left",
   },
 ];
 
 const handleRowAdd = () => {
   dialogData.show = true;
-  dialogData.mode = 'ADD';
+  dialogData.mode = "ADD";
 };
 
 const handleRowEdit = (row) => {
   console.log(row);
   dialogData.show = true;
-  dialogData.mode = 'EDIT';
+  dialogData.mode = "EDIT";
   dialogData.form = {
     ...row,
     permissions: row.permissions?.map((item) => {
@@ -85,7 +92,7 @@ const handleRowEdit = (row) => {
 
 const handleRowDelete = (row) => {
   $q.dialog({
-    title: 'DELETE',
+    title: "DELETE",
     message: `刪除角色 ${row.name}?`,
     cancel: true,
   }).onOk(() => {
@@ -101,26 +108,26 @@ const handleAddEditForm = () => {
   };
 
   switch (dialogData.mode) {
-    case 'ADD': {
+    case "ADD": {
       postRole(params).then((res) => {
         dialogData.show = false;
-        dialogData.errMsg = '';
+        dialogData.errMsg = "";
         dialogData.form = {
-          id: '',
-          name: '',
+          id: "",
+          name: "",
           permissions: [],
         };
       });
 
       break;
     }
-    case 'EDIT': {
+    case "EDIT": {
       updateRole(params).then((res) => {
         dialogData.show = false;
-        dialogData.errMsg = '';
+        dialogData.errMsg = "";
         dialogData.form = {
-          id: '',
-          name: '',
+          id: "",
+          name: "",
           permissions: [],
         };
       });
@@ -186,7 +193,7 @@ onMounted(() => {
         <q-card style="min-width: 350px">
           <q-card-section>
             <div class="text-h6">
-              {{ dialogData.mode === 'ADD' ? '新增角色' : '編輯角色' }}
+              {{ dialogData.mode === "ADD" ? "新增角色" : "編輯角色" }}
             </div>
           </q-card-section>
 

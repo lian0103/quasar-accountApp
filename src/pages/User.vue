@@ -1,9 +1,10 @@
 <script setup>
-import { useUserStore, useRoleStore } from '../stores/index';
-import { onMounted, ref, reactive } from 'vue';
-import { createUser } from '../firebase/auth';
-import { useQuasar } from 'quasar';
-import { setUserInfo, updateUserInfo, deleteUser } from '../firebase/user';
+import { useUserStore, useRoleStore } from "../stores/index";
+import { onMounted, ref, reactive } from "vue";
+import { createUser } from "../firebase/auth";
+import { useQuasar } from "quasar";
+import { setUserInfo, updateUserInfo, deleteUser } from "../firebase/user";
+import { parseFireStoreTimeStamp } from "../utils";
 
 const $q = useQuasar();
 const UserStore = useUserStore();
@@ -12,13 +13,13 @@ const loading = ref(false);
 const rows = ref([]);
 const dialogData = reactive({
   show: false,
-  mode: 'ADD',
-  errMsg: '',
+  mode: "ADD",
+  errMsg: "",
   form: {
-    name: '',
-    password: '',
-    password2: '',
-    email: '',
+    name: "",
+    password: "",
+    password2: "",
+    email: "",
     roles: [],
   },
 });
@@ -26,45 +27,51 @@ const emailRule = /^([A-Za-z0-9_\-\.])+\@([A-Za-z0-9_\-\.])+\.([A-Za-z]{2,4})$/;
 
 const columns = [
   {
-    name: 'uid',
-    label: '使用者id',
-    align: 'left',
+    name: "uid",
+    label: "使用者id",
+    align: "left",
     field: (row) => row.uid,
   },
   {
-    name: 'name',
-    label: '姓名',
-    align: 'left',
+    name: "name",
+    label: "姓名",
+    align: "left",
     field: (row) => row.name,
   },
   {
-    name: 'email',
-    label: '信箱',
-    align: 'left',
+    name: "email",
+    label: "信箱",
+    align: "left",
     field: (row) => row.email,
   },
   {
-    name: 'roles',
-    label: '角色id',
-    align: 'left',
+    name: "roles",
+    label: "角色id",
+    align: "left",
     field: (row) => row.roles,
-    format: (arr) => arr?.join(','),
+    format: (arr) => arr?.join(","),
   },
   {
-    name: 'btns',
-    label: '操作',
-    align: 'left',
+    name: "time",
+    label: "新增/更新時間",
+    align: "left",
+    field: (row) => parseFireStoreTimeStamp(row.updated || row.created),
+  },
+  {
+    name: "btns",
+    label: "操作",
+    align: "left",
   },
 ];
 
 const handleRowAdd = () => {
   dialogData.show = true;
-  dialogData.mode = 'ADD';
+  dialogData.mode = "ADD";
 };
 
 const handleAddEditForm = () => {
   switch (dialogData.mode) {
-    case 'ADD': {
+    case "ADD": {
       createUser(dialogData.form)
         .then((res) => {
           // console.log('created res', res.uid);
@@ -74,12 +81,12 @@ const handleAddEditForm = () => {
           };
           setUserInfo(params).then((res) => {
             dialogData.show = false;
-            dialogData.errMsg = '';
+            dialogData.errMsg = "";
             dialogData.form = {
-              name: '',
-              password: '',
-              password2: '',
-              email: '',
+              name: "",
+              password: "",
+              password2: "",
+              email: "",
               roles: [],
             };
           });
@@ -91,7 +98,7 @@ const handleAddEditForm = () => {
 
       break;
     }
-    case 'EDIT': {
+    case "EDIT": {
       let params = {
         ...dialogData.form,
         roles: dialogData.form.roles.filter((item) => item),
@@ -99,12 +106,12 @@ const handleAddEditForm = () => {
 
       updateUserInfo(params).then((res) => {
         dialogData.show = false;
-        dialogData.errMsg = '';
+        dialogData.errMsg = "";
         dialogData.form = {
-          name: '',
-          password: '',
-          password2: '',
-          email: '',
+          name: "",
+          password: "",
+          password2: "",
+          email: "",
           roles: [],
         };
       });
@@ -116,7 +123,7 @@ const handleAddEditForm = () => {
 const handleRowEdit = (row) => {
   // console.log(row);
   dialogData.show = true;
-  dialogData.mode = 'EDIT';
+  dialogData.mode = "EDIT";
   dialogData.form = {
     ...row,
   };
@@ -125,7 +132,7 @@ const handleRowEdit = (row) => {
 const handleRowDelete = (row) => {
   // console.log(row);
   $q.dialog({
-    title: 'DELETE',
+    title: "DELETE",
     message: `刪除會員${row.name}?`,
     cancel: true,
   }).onOk(() => {
@@ -196,7 +203,7 @@ onMounted(() => {
         <q-card style="min-width: 350px">
           <q-card-section>
             <div class="text-h6">
-              {{ dialogData.mode === 'ADD' ? '新增使用者' : '編輯使用者' }}
+              {{ dialogData.mode === "ADD" ? "新增使用者" : "編輯使用者" }}
             </div>
           </q-card-section>
 

@@ -11,6 +11,7 @@ import {
 } from "../firebase/service";
 import { onMounted, ref, reactive } from "vue";
 import { useQuasar } from "quasar";
+import { parseFireStoreTimeStamp } from "../utils";
 
 const $q = useQuasar();
 const ServiceStore = useServiceStore();
@@ -87,6 +88,12 @@ const columns = [
     label: "描述",
     align: "left",
     field: (row) => row.desc,
+  },
+  {
+    name: "time",
+    label: "新增/更新時間",
+    align: "left",
+    field: (row) => parseFireStoreTimeStamp(row.updated || row.created),
   },
   {
     name: "btns",
