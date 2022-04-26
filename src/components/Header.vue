@@ -1,7 +1,7 @@
 <script setup>
 import { useRouter } from "vue-router";
 import { useAppStore, useUserStore } from "../stores/index";
-import { fiebaseSignOut } from '../firebase/auth'
+import { fiebaseSignOut } from "../firebase/auth";
 
 const $router = useRouter();
 const appStore = useAppStore();
@@ -18,6 +18,7 @@ const handleSignInOut = () => {
       .then((res) => {
         userStore.userInfo = null;
         localStorage.setItem("bs-userInfo", null);
+        localStorage.removeItem("bs-validRoutes");
         $router.push({ path: "/" });
       })
       .catch((err) => {});
@@ -44,6 +45,17 @@ const handleSignInOut = () => {
         </div>
         <q-btn dense flat icon="menu" @click="toggleLeftDrawer" />
       </q-toolbar-title>
+
+      <q-icon
+        name="face"
+        class="text-2xl p-2"
+        v-if="userStore.getUserInfo"
+        @click="
+          $router.push({
+            path: '/info',
+          })
+        "
+      />
 
       <q-btn
         color="secondary"

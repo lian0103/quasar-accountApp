@@ -152,7 +152,7 @@ onMounted(() => {
   <q-page>
     <h2 class="font-2xl font-Oswald-500 px-4">場地列表</h2>
     <div class="flex justify-end px-4">
-      <q-btn color="primary" size="sm" label="新增服務" @click="handleRowAdd" />
+      <q-btn color="primary" size="sm" label="新增場地" @click="handleRowAdd" />
     </div>
     <div class="q-pa-md">
       <q-table

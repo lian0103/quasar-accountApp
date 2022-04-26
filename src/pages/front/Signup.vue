@@ -1,9 +1,14 @@
 <script setup>
 import { reactive, ref } from "vue";
-import { createUser, firebaseSignIn, loginWithGoogle } from "../../firebase/auth";
-import { useUserStore } from "../../stores";
+import {
+  createUser,
+  firebaseSignIn,
+  loginWithGoogle,
+} from "../../firebase/auth";
+import { useUserStore, useAppStore } from "../../stores";
 import { useRouter } from "vue-router";
 const userStore = useUserStore();
+const appStore = useAppStore();
 const $router = useRouter();
 const formLogin = reactive({
   email: "",
@@ -52,14 +57,14 @@ const handleGoogle = () => {
   loginWithGoogle().then((res) => {
     userStore.userInfo = res;
     localStorage.setItem("bs-userInfo", JSON.stringify(res));
-     $router.push({ path: "/info" });
+    $router.push({ path: "/info" });
   });
 };
 </script>
 
 <template>
   <div class="px-4 py-6">
-    <div class="w-full md:w-1/2 md:mx-auto">
+    <div class="w-full md:w-1/2 md:mx-auto h-80">
       <q-tabs
         v-model="userStore.pageTab"
         dense
@@ -174,7 +179,8 @@ const handleGoogle = () => {
           </q-form>
         </q-tab-panel>
       </q-tab-panels>
-
+    </div>
+    <div class="w-full md:w-1/2 md:mx-auto">
       <div class="px-4 py-6">
         <h3>使用其他註冊/登入</h3>
         <q-btn

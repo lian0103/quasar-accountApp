@@ -4,6 +4,8 @@ import { postRole, updateRole, deleteRole } from "../../firebase/role";
 import { onMounted, ref, reactive } from "vue";
 import { useQuasar } from "quasar";
 import { parseFireStoreTimeStamp } from "../../utils";
+import { permissionItemNameMap } from '../../router/permissionItemMap'
+
 
 const $q = useQuasar();
 const RoleStore = useRoleStore();
@@ -19,18 +21,6 @@ const dialogData = reactive({
     permissions: [],
   },
 });
-
-const permissionItemNameMap = {
-  userAdd: "使用者新增",
-  userDelete: "使用者刪除",
-  userEdit: "使用者編輯",
-  serviceDelete: "服務刪除",
-  serviceAdd: "服務新增",
-  serviceEdit: "服務編輯",
-  roleAdd: "角色新增",
-  roleEdit: "角色編輯",
-  roleDelete: "角色刪除",
-};
 
 const columns = [
   {

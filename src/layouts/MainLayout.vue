@@ -2,6 +2,10 @@
 import HeaderVue from "../components/Header.vue";
 import { useRouter } from "vue-router";
 import { useAppStore } from "../stores/index";
+import {
+  permissionItemMap,
+  menuRouteNameMap,
+} from "../router/permissionItemMap";
 
 const appStore = useAppStore();
 
@@ -19,29 +23,16 @@ const $router = useRouter();
       bordered
     >
       <q-list style="min-width: 80px">
-        <q-item clickable v-close-popup>
-          <q-item-section @click="$router.push({ path: '/dashbord' })">
-            後台狀態</q-item-section
-          >
-        </q-item>
-        <q-item clickable v-close-popup>
-          <q-item-section @click="$router.push({ path: '/user' })"
-            >使用者清單</q-item-section
-          >
-        </q-item>
-        <q-item clickable v-close-popup>
-          <q-item-section @click="$router.push({ path: '/role' })"
-            >角色權限</q-item-section
-          >
-        </q-item>
-        <q-item clickable v-close-popup>
-          <q-item-section @click="$router.push({ path: '/service' })"
-            >服務項目</q-item-section
-          >
-        </q-item>
-        <q-item clickable v-close-popup>
-          <q-item-section @click="$router.push({ path: '/stadium' })"
-            >場地清單</q-item-section
+        <q-item
+          v-for="path in appStore.getValidedRoutes.filter((item) =>
+            menuRouteNameMap[item] ? true : false
+          )"
+          :key="path"
+          clickable
+          v-close-popup
+        >
+          <q-item-section @click="$router.push({ path: path })">
+            {{ menuRouteNameMap[path] }}</q-item-section
           >
         </q-item>
       </q-list>
