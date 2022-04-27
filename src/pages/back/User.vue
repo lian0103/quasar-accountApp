@@ -5,6 +5,7 @@ import { createUser } from "../../firebase/auth";
 import { useQuasar } from "quasar";
 import { setUserInfo, updateUserInfo, deleteUser } from "../../firebase/user";
 import { parseFireStoreTimeStamp } from "../../utils";
+import { uploadFile } from "../../firebase/storage";
 
 const $q = useQuasar();
 const UserStore = useUserStore();
@@ -17,10 +18,12 @@ const dialogData = reactive({
   errMsg: "",
   form: {
     name: "",
+    avatar: "",
     password: "",
     password2: "",
     email: "",
     roles: [],
+    file: null,
   },
 });
 const emailRule = /^([A-Za-z0-9_\-\.])+\@([A-Za-z0-9_\-\.])+\.([A-Za-z]{2,4})$/;
@@ -39,6 +42,12 @@ const columns = [
     field: (row) => row.name,
   },
   {
+    name: "avatar",
+    label: "頭像",
+    align: "left",
+    field: (row) => row.avatar,
+  },
+  {
     name: "email",
     label: "信箱",
     align: "left",
@@ -55,6 +64,7 @@ const columns = [
     name: "time",
     label: "新增/更新時間",
     align: "left",
+    sortable: true,
     field: (row) => parseFireStoreTimeStamp(row.updated || row.created),
   },
   {
@@ -69,7 +79,29 @@ const handleRowAdd = () => {
   dialogData.mode = "ADD";
 };
 
-const handleAddEditForm = () => {
+const handleRowEdit = (row) => {
+  // console.log(row);
+  dialogData.show = true;
+  dialogData.mode = "EDIT";
+  dialogData.form = {
+    ...row,
+  };
+};
+
+const handleAddEditForm = async () => {
+  console.log(typeof dialogData.form.file);
+  if (dialogData.form.file) {
+    console.log(dialogData.form.file);
+    let path = `uploaded/${dialogData.form.email}/avatar.${
+      dialogData.form.file.name.split(".")[1]
+    }`;
+    // console.log("path", path);
+    let uploadResUrl = await uploadFile(dialogData.form.file, path);
+    dialogData.form.avatar = uploadResUrl;
+    delete dialogData.form.file;
+    // console.log(uploadResUrl);
+  }
+
   switch (dialogData.mode) {
     case "ADD": {
       createUser(dialogData.form)
@@ -103,6 +135,7 @@ const handleAddEditForm = () => {
         ...dialogData.form,
         roles: dialogData.form.roles.filter((item) => item),
       };
+      console.log("params", params);
 
       updateUserInfo(params).then((res) => {
         dialogData.show = false;
@@ -120,15 +153,6 @@ const handleAddEditForm = () => {
   }
 };
 
-const handleRowEdit = (row) => {
-  // console.log(row);
-  dialogData.show = true;
-  dialogData.mode = "EDIT";
-  dialogData.form = {
-    ...row,
-  };
-};
-
 const handleRowDelete = (row) => {
   // console.log(row);
   $q.dialog({
@@ -139,6 +163,11 @@ const handleRowDelete = (row) => {
     deleteUser(row);
     dialogData.show = false;
   });
+};
+
+const getSelectedFile = (fileArr) => {
+  console.log(fileArr);
+  dialogData.form.file = fileArr[0];
 };
 
 onMounted(() => {
@@ -171,6 +200,21 @@ onMounted(() => {
       >
         <template v-slot:loading>
           <q-inner-loading showing color="primary" />
+        </template>
+        <template v-slot:body-cell-avatar="props">
+          <div class="w-10 flex justify-center items-center">
+            <q-img
+              v-if="props.row.avatar"
+              class="rounded relative left-3 top-1"
+              :src="props.row.avatar"
+              :ratio="1"
+            />
+            <q-icon
+              v-else
+              name="face"
+              class="text-2xl p-2 relative left-3 top-1"
+            />
+          </div>
         </template>
         <template v-slot:body-cell-btns="props">
           <q-td :props="props">
@@ -209,6 +253,12 @@ onMounted(() => {
 
           <q-card-section class="q-pt-none">
             <q-form @submit="handleAddEditForm" class="q-gutter-md relative">
+              <q-uploader
+                accept="image/jpeg,.png,.gif"
+                label="頭像上傳"
+                @added="getSelectedFile"
+              />
+
               <q-input
                 dense
                 v-model="dialogData.form.name"
@@ -219,6 +269,7 @@ onMounted(() => {
               />
 
               <q-input
+                v-if="dialogData.mode == 'ADD'"
                 dense
                 v-model="dialogData.form.password"
                 label="密碼"
@@ -229,6 +280,7 @@ onMounted(() => {
               />
 
               <q-input
+                v-if="dialogData.mode == 'ADD'"
                 dense
                 v-model="dialogData.form.password2"
                 label="密碼確認"
