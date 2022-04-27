@@ -8,6 +8,7 @@ import {
 } from "../../firebase/stadium";
 import { useQuasar } from "quasar";
 import { parseFireStoreTimeStamp } from "../../utils";
+import { uploadFile } from "../../firebase/storage";
 
 const $q = useQuasar();
 const StadiumStore = useStadiumStore();
@@ -25,6 +26,7 @@ const dialogData = reactive({
     rooms: "",
     desc: "",
   },
+  file: null,
 });
 
 const columns = [
@@ -39,6 +41,12 @@ const columns = [
     label: "場館名稱",
     align: "left",
     field: (row) => row.name,
+  },
+  {
+    name: "img",
+    label: "預覽圖片",
+    align: "left",
+    field: (row) => row.img,
   },
   {
     name: "address",
@@ -101,7 +109,22 @@ const handleRowDelete = (row) => {
   });
 };
 
-const handleAddEditForm = () => {
+const getSelectedFile = (fileArr) => {
+  // console.log(fileArr);
+  dialogData.file = fileArr[0];
+};
+
+const handleAddEditForm = async () => {
+  if (dialogData.file && dialogData.mode == "EDIT") {
+    // console.log(dialogData.file);
+    let path = `uploaded/${dialogData.form.id}/site.${
+      dialogData.file.name.split(".")[1]
+    }`;
+    // console.log("path", path);
+    let uploadResUrl = await uploadFile(dialogData.file, path);
+    dialogData.form.img = uploadResUrl;
+  }
+
   let params = {
     ...dialogData.form,
   };
@@ -132,6 +155,7 @@ const handleAddEditForm = () => {
           rooms: "",
           desc: "",
         };
+        dialogData.file = null;
       });
       break;
     }
@@ -163,6 +187,16 @@ onMounted(() => {
       >
         <template v-slot:loading>
           <q-inner-loading showing color="primary" />
+        </template>
+        <template v-slot:body-cell-img="props">
+          <div class="w-10 flex justify-center items-center">
+            <q-img
+              v-if="props.row.img"
+              class="relative left-3 top-1"
+              :src="props.row.img"
+              :ratio="1"
+            />
+          </div>
         </template>
         <template v-slot:body-cell-btns="props">
           <q-td :props="props">
@@ -200,6 +234,14 @@ onMounted(() => {
 
           <q-card-section class="q-pt-none">
             <q-form @submit="handleAddEditForm" class="q-gutter-md relative">
+              <div v-if="dialogData.mode === 'EDIT'">
+                <q-uploader
+                  accept="image/jpeg,.png,.gif"
+                  label="圖片上傳"
+                  @added="getSelectedFile"
+                />
+              </div>
+
               <q-input
                 dense
                 v-model="dialogData.form.name"

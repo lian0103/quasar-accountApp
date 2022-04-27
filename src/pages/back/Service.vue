@@ -206,6 +206,7 @@ const handleAddEditForm = async () => {
           price: 0,
           desc: "",
         };
+        dialogData.file = null;
       });
       break;
     }
