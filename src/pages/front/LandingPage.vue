@@ -113,7 +113,7 @@ const StadiumStore = useStadiumStore();
     >
       場館/場地/空間
     </h2>
-    <div class="cardBox flex-wrap lg:flex-nowrap">
+    <div class="cardBox flex-wrap lg:flex-nowrap justify-around sm:justify-center">
       <q-card
         class="card bg3 h-40 lg:h-80 lg:mx-2 my-2 w-full lg:w-1/3 cursor-pointer"
         v-for="item in StadiumStore.getStadiumlist"
@@ -140,7 +140,7 @@ const StadiumStore = useStadiumStore();
               }}
             </p>
             <p class="pl-3">{{ item.desc }}</p>
-            <p class="pl-3">空間:{{ item.rooms }}</p>
+            <p v-if=" item.rooms " class="pl-3">空間:{{ item.rooms }}</p>
             <p class="pl-3">{{ item.desc }}</p>
           </div>
         </q-card-section>
