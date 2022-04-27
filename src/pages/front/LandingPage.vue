@@ -43,7 +43,7 @@ const StadiumStore = useStadiumStore();
     </h2>
     <div class="cardBox flex-wrap lg:flex-nowrap">
       <q-card
-        class="card bg1 h-40 lg:h-80 lg:mx-2 my-2 w-full lg:w-1/3"
+        class="card bg1 h-40 lg:h-80 lg:mx-2 my-2 w-full lg:w-1/3 cursor-pointer"
         v-for="item in ServiceStore.getServicelist"
         :key="item.id"
       >
@@ -77,48 +77,99 @@ const StadiumStore = useStadiumStore();
     </div>
   </section>
 
-  <section class="w-full md:w-1/2 mx-auto px-6 p-10">
+  <section class="w-full md:w-3/4 mx-auto px-6 p-10">
     <h2
       class="text-4xl font-bold text-center text-gray-800 mb-8 font-Oswald-500"
     >
       服務人員/教練/老師
     </h2>
-    <p>
-      Lorem ipsum dolor sit amet consectetur adipisicing elit. Eos excepturi
-      dignissimos atque repudiandae provident, aspernatur doloremque perferendis
-      aut est error quod explicabo nisi iste corrupti facilis quae et! Delectus,
-      voluptates!
-    </p>
+    <div class="cardBox flex-wrap sm:flex-nowrap justify-around sm:justify-center">
+      <div
+        class="card2 bg2 mx-1 sm:mx-2 my-2 w-1/3 rounded-md cursor-pointer"
+        v-for="item in UserStore.getUserlist.filter((item) =>
+          item.roles?.includes('server')
+        )"
+        :key="item.uid"
+      >
+        <q-img
+          class="h-36 w-full block"
+          :src="
+            item.avatar
+              ? item.avatar
+              : 'https://cdn.quasar.dev/img/parallax2.jpg'
+          "
+        >
+          <div class="absolute-bottom text-h6">
+            <p><q-icon name="face" class="text-2xl p-2" />{{ item.name }}</p>
+          </div>
+        </q-img>
+      </div>
+    </div>
   </section>
 
-  <section class="w-full md:w-1/2 mx-auto px-6 p-10">
+  <section class="w-full md:w-3/4 mx-auto px-6 p-10">
     <h2
       class="text-4xl font-bold text-center text-gray-800 mb-8 font-Oswald-500"
     >
       場館/場地/空間
     </h2>
-    <p>
-      Lorem ipsum dolor sit amet consectetur adipisicing elit. Eos excepturi
-      dignissimos atque repudiandae provident, aspernatur doloremque perferendis
-      aut est error quod explicabo nisi iste corrupti facilis quae et! Delectus,
-      voluptates!
-    </p>
+    <div class="cardBox flex-wrap lg:flex-nowrap">
+      <q-card
+        class="card bg3 h-40 lg:h-80 lg:mx-2 my-2 w-full lg:w-1/3 cursor-pointer"
+        v-for="item in StadiumStore.getStadiumlist"
+        :key="item.id"
+      >
+        <q-card-section class="pb-12 flex lg:flex-col">
+          <q-img
+            class="h-36 w-1/2 lg:w-full block lg:hidden"
+            :src="
+              item.img ? item.img : 'https://cdn.quasar.dev/img/parallax2.jpg'
+            "
+          >
+            <div class="absolute-bottom text-h6">{{ item.name }}</div>
+          </q-img>
+          <div class="w-1/2 lg:w-full">
+            <p>
+              <q-icon name="home_filled" class="text-2xl p-2" />{{
+                item.address
+              }}
+            </p>
+            <p>
+              <q-icon name="access_time" class="text-2xl p-2" />{{
+                item.opneHour
+              }}
+            </p>
+            <p class="pl-3">{{ item.desc }}</p>
+            <p class="pl-3">空間:{{ item.rooms }}</p>
+            <p class="pl-3">{{ item.desc }}</p>
+          </div>
+        </q-card-section>
+      </q-card>
+    </div>
   </section>
 </template>
 
 <style lang="scss" scoped>
 .cardBox {
   display: flex;
-  justify-content: center;
-  align-items: center;
   .card {
     overflow: hidden;
     @media screen and (min-width: 1023px) {
       max-width: 320px;
     }
   }
-  .bg1{
+  .card2 {
+    overflow: hidden;
+  }
+  .bg1 {
     background: $warning;
+  }
+
+  .bg2 {
+    background: $info;
+  }
+  .bg3 {
+    background: $secondary;
   }
 }
 </style>
