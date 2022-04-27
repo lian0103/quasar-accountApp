@@ -65,7 +65,7 @@ const columns = [
           UserStore.getUserlist.filter((item) => item.uid === uid)[0].name ||
           uid;
         return name;
-      });
+      }).join(",");
     },
   },
   {
@@ -145,10 +145,12 @@ const handleAddEditForm = () => {
   let params = {
     ...dialogData.form,
     price: parseInt(dialogData.form.price),
-    server: dialogData.form.server || "",
+    server: dialogData.form.server?.value || dialogData.form.server || "",
     stadium: dialogData.form.stadium.value || "",
     attendent: dialogData.form.attendent?.map((item) => item.value) || [],
   };
+  console.log("params", params);
+
   switch (dialogData.mode) {
     case "ADD": {
       postService(params).then((res) => {
