@@ -2,7 +2,7 @@
   "name": "base",
   "version": "0.0.1",
   "description": "A Quasar Framework app",
-  "productName": "Quasar app",
+  "productName": "服務即時預約系統",
   "author": "Jason <gt07891@greattree.com.tw>",
   "private": true,
   "scripts": {
