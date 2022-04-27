@@ -89,7 +89,7 @@ const handleRowEdit = (row) => {
 };
 
 const handleAddEditForm = async () => {
-  console.log(typeof dialogData.form.file);
+  // console.log(typeof dialogData.form.file);
   if (dialogData.form.file) {
     console.log(dialogData.form.file);
     let path = `uploaded/${dialogData.form.email}/avatar.${
@@ -166,7 +166,7 @@ const handleRowDelete = (row) => {
 };
 
 const getSelectedFile = (fileArr) => {
-  console.log(fileArr);
+  // console.log(fileArr);
   dialogData.form.file = fileArr[0];
 };
 

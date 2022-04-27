@@ -12,6 +12,7 @@ import {
 import { onMounted, ref, reactive } from "vue";
 import { useQuasar } from "quasar";
 import { parseFireStoreTimeStamp } from "../../utils";
+import { uploadFile } from "../../firebase/storage";
 
 const $q = useQuasar();
 const ServiceStore = useServiceStore();
@@ -31,6 +32,7 @@ const dialogData = reactive({
     price: 0,
     desc: "",
   },
+  file: null,
 });
 
 const columns = [
@@ -47,6 +49,12 @@ const columns = [
     field: (row) => row.name,
   },
   {
+    name: "img",
+    label: "預覽圖片",
+    align: "left",
+    field: (row) => row.img,
+  },
+  {
     name: "server",
     label: "提供者",
     align: "left",
@@ -60,12 +68,14 @@ const columns = [
     align: "left",
     field: (row) => row.attendent,
     format: (arr) => {
-      return arr.map((uid) => {
-        let name =
-          UserStore.getUserlist.filter((item) => item.uid === uid)[0].name ||
-          uid;
-        return name;
-      }).join(",");
+      return arr
+        .map((uid) => {
+          let name =
+            UserStore.getUserlist.filter((item) => item.uid === uid)[0]?.name ||
+            uid;
+          return name;
+        })
+        .join(",");
     },
   },
   {
@@ -141,7 +151,23 @@ const handleRowDelete = (row) => {
   });
 };
 
-const handleAddEditForm = () => {
+const getSelectedFile = (fileArr) => {
+  // console.log(fileArr);
+  dialogData.file = fileArr[0];
+};
+
+const handleAddEditForm = async () => {
+  // console.log(dialogData.form);
+  if (dialogData.file && dialogData.mode == "EDIT") {
+    // console.log(dialogData.file);
+    let path = `uploaded/${dialogData.form.id}/service.${
+      dialogData.file.name.split(".")[1]
+    }`;
+    // console.log("path", path);
+    let uploadResUrl = await uploadFile(dialogData.file, path);
+    dialogData.form.img = uploadResUrl;
+  }
+
   let params = {
     ...dialogData.form,
     price: parseInt(dialogData.form.price),
@@ -149,7 +175,7 @@ const handleAddEditForm = () => {
     stadium: dialogData.form.stadium.value || "",
     attendent: dialogData.form.attendent?.map((item) => item.value) || [],
   };
-  console.log("params", params);
+  // console.log("params", params);
 
   switch (dialogData.mode) {
     case "ADD": {
@@ -212,6 +238,16 @@ onMounted(() => {
         <template v-slot:loading>
           <q-inner-loading showing color="primary" />
         </template>
+        <template v-slot:body-cell-img="props">
+          <div class="w-10 flex justify-center items-center">
+            <q-img
+              v-if="props.row.img"
+              class="relative left-3 top-1"
+              :src="props.row.img"
+              :ratio="1"
+            />
+          </div>
+        </template>
         <template v-slot:body-cell-btns="props">
           <q-td :props="props">
             <q-btn
@@ -249,6 +285,14 @@ onMounted(() => {
 
         <q-card-section class="q-pt-none">
           <q-form @submit="handleAddEditForm" class="q-gutter-md relative">
+            <div v-if="dialogData.mode === 'EDIT'">
+              <q-uploader
+                accept="image/jpeg,.png,.gif"
+                label="圖片上傳"
+                @added="getSelectedFile"
+              />
+            </div>
+
             <q-input
               dense
               v-model="dialogData.form.name"
