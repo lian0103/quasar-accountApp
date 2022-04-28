@@ -5,7 +5,7 @@
 功能:使用者註冊/登入、花費管理、標籤管理。   
 特色:Quasar PWA、圖表顯示.   
 [link](https://account-app-f70c0.web.app/#/).   
-- 2022.01
+-2022.01
 
 ## branch prevention.   
 實作一個回報公司單位健康狀況的服務。   
