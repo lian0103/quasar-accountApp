@@ -1,6 +1,6 @@
 # Quasar Apps 
 
-## branch main
+## branch account-service
 實作一個紀錄花費的服務。
 功能:使用者註冊/登入、花費管理、標籤管理。
 特色:Quasar PWA、圖表顯示
