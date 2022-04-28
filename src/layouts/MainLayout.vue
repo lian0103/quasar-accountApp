@@ -10,6 +10,9 @@ import {
 const appStore = useAppStore();
 
 const $router = useRouter();
+
+console.log(' $router', $router.currentRoute.value.path)
+
 </script>
 
 <template>
@@ -31,7 +34,7 @@ const $router = useRouter();
           clickable
           v-close-popup
         >
-          <q-item-section @click="$router.push({ path: path })">
+          <q-item-section :class="path==$router.currentRoute.value.path ? 'text-indigo-700 font-bold':''" @click="$router.push({ path: path })">
             {{ menuRouteNameMap[path] }}</q-item-section
           >
         </q-item>

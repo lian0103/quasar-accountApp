@@ -33,9 +33,13 @@ $router.beforeEach(async (to, from, next) => {
     await ServiceStore.initServicelistListning();
   }
 
-  AppStore.initValidRoutesListning();
+  await AppStore.initValidRoutesListning();
 
-  next();
+  if (AppStore.getValidedRoutes.includes(path)) {
+    next();
+  } else {
+    next("/");
+  }
 });
 </script>
 
