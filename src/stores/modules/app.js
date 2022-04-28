@@ -9,7 +9,8 @@ import { useUserStore } from "./user";
 export const useAppStore = defineStore({
   id: "app",
   state: () => ({
-    leftDrawerOpen: true,
+    leftDrawerOpen: false,
+    curSelectedService: null,
     validedRoutes: localStorage.getItem("bs-validRoutes")
       ? [
           ...JSON.parse(localStorage.getItem("bs-validRoutes")),
@@ -44,7 +45,9 @@ export const useAppStore = defineStore({
           ),
         ];
       } else {
-        this.validedRoutes = [...defaultValidRoutes];
+        this.validedRoutes = [
+          ...defaultValidRoutes.filter((item) => !["/info"].includes(item)),
+        ];
       }
     },
   },

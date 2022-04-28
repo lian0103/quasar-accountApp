@@ -1,10 +1,12 @@
 <script setup>
 import { ref, onMounted } from "vue";
 import {
+  useAppStore,
   useServiceStore,
   useUserStore,
   useStadiumStore,
 } from "../../stores/index";
+import { updateServiceInfo } from "../../firebase/service";
 import { useQuasar, dom } from "quasar";
 import { Swiper, SwiperSlide } from "swiper/vue";
 import { Pagination } from "swiper";
@@ -20,10 +22,46 @@ const getSwiperNum = () => {
   }
   return 3;
 };
+const $q = useQuasar();
+const AppStore = useAppStore();
 const ServiceStore = useServiceStore();
 const UserStore = useUserStore();
 const StadiumStore = useStadiumStore();
 const swiperNum = ref(getSwiperNum());
+const handleBookService = (rowItem) => {
+  // console.log("rowItem", rowItem);
+  const userInfo = UserStore.getUserInfo;
+  if (!userInfo) {
+    $q.dialog({
+      title: "無法預約",
+      message: `請先登入成為會員`,
+      cancel: true,
+    });
+    return false;
+  }
+  if (rowItem.attendent.includes(userInfo.uid)) {
+    $q.dialog({
+      title: "已預約服務",
+      message: ``,
+      cancel: true,
+    });
+    return false;
+  }
+
+  $q.dialog({
+    title: `預約服務${rowItem.name}?`,
+    message: ``,
+    cancel: true,
+  }).onOk(() => {
+    let params = {
+      ...rowItem,
+      attendent: [...rowItem.attendent, userInfo.uid],
+    };
+    updateServiceInfo(params).then((res) => {
+      console.log(res);
+    });
+  });
+};
 
 onMounted(() => {
   window.addEventListener("resize", () => {
@@ -70,38 +108,63 @@ onMounted(() => {
         clickable: true,
       }"
       :modules="[Pagination]"
-      class="mySwiper cardBox"
+      class="cardBox"
     >
       <swiper-slide
         v-for="item in ServiceStore.getServicelist"
         :key="item.id"
         class="card"
       >
-        <q-card class="bg1 h-64 lg:h-80 lg:mx-2 lg:my-2 w-full cursor-pointer">
+        <q-card class="bg1 lg:mx-2 lg:my-2 w-full cursor-pointer">
           <q-card-section class="pb-12 flex-col">
             <q-img
-              class="h-24 lg:h-36 w-full block lg:hidden"
+              class="h-36 lg:h-36 w-full block lg:hidden"
               :src="
                 item.img ? item.img : 'https://cdn.quasar.dev/img/parallax2.jpg'
               "
             >
               <div class="absolute-bottom lg:text-h6">{{ item.name }}</div>
             </q-img>
-            <div class="w-full">
+            <div class="w-full h-44 lg:h-44 relative pb-4">
               <p>
                 <q-icon name="attach_money" class="text-2xl p-2" />{{
                   item.price
                 }}
               </p>
-              <p>
+              <p v-if="item.server">
                 <q-icon name="face" class="text-2xl p-2" />{{
                   UserStore.getUserlist.filter(
                     (uItem) => uItem.uid == item.server
                   )[0]?.name
                 }}
               </p>
-              <p class="pl-3">{{ item.desc }}</p>
+              <p>
+                {{
+                  StadiumStore.getStadiumlist.filter(
+                    (sItem) => sItem.id == item.stadium
+                  )[0]?.name || ""
+                }}
+              </p>
               <p class="pl-3">目前預約人數:{{ item.attendent?.length || 0 }}</p>
+              <p v-if="item.desc" class="pl-3">{{ item.desc }}</p>
+              <p class="absolute -bottom-6 left-1/3">
+                <q-btn
+                  label="預約"
+                  icon="fas fa-plus-circle"
+                  size="md"
+                  color="secondary"
+                  rounded
+                  :disable="
+                    !UserStore.getUserInfo ||
+                    item.attendent.includes(UserStore.getUserInfo?.uid)
+                  "
+                  @click="
+                    () => {
+                      handleBookService(item);
+                    }
+                  "
+                />
+              </p>
             </div>
           </q-card-section>
         </q-card>

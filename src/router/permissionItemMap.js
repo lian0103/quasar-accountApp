@@ -1,7 +1,8 @@
-export const defaultValidRoutes = ["/", "/signup"];
+export const defaultValidRoutes = ["/", "/signup", "/info"];
 
 export const menuRouteNameMap = {
   "/": "首頁",
+  "/info":'個人資訊',
   "/user": "使用者管理",
   "/service": "服務管理",
   "/role": "角色管理",

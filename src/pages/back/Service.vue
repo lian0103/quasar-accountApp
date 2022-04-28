@@ -129,9 +129,12 @@ const handleRowEdit = (row) => {
           ?.name || row.server,
       value: row.server,
     },
-    stadium:
-      StadiumStore.getStadiumlist.filter((item) => item.id == row.stadium)[0]
-        ?.name || "",
+    stadium: {
+      label:
+        StadiumStore.getStadiumlist.filter((item) => item.id == row.stadium)[0]
+          ?.name || "",
+      value: row.stadium,
+    },
     attendent: row.attendent.map((uid) => {
       let target = UserStore.getUserlist.filter((item) => item.uid == uid)[0];
       return {
