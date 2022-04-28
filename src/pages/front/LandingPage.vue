@@ -1,15 +1,35 @@
 <script setup>
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
 import {
   useServiceStore,
   useUserStore,
   useStadiumStore,
 } from "../../stores/index";
-import { useQuasar } from "quasar";
+import { useQuasar, dom } from "quasar";
+import { Swiper, SwiperSlide } from "swiper/vue";
+import { Pagination } from "swiper";
+import "swiper/css";
+import "swiper/css/pagination";
 
+const getSwiperNum = () => {
+  if (window.innerWidth < 475) {
+    return 1;
+  }
+  if (window.innerWidth < 1024) {
+    return 2;
+  }
+  return 3;
+};
 const ServiceStore = useServiceStore();
 const UserStore = useUserStore();
 const StadiumStore = useStadiumStore();
+const swiperNum = ref(getSwiperNum());
+
+onMounted(() => {
+  window.addEventListener("resize", () => {
+    swiperNum.value = getSwiperNum();
+  });
+});
 </script>
 
 <template>
@@ -41,40 +61,53 @@ const StadiumStore = useStadiumStore();
     >
       可預約服務
     </h2>
-    <div class="cardBox flex-wrap lg:flex-nowrap">
-      <q-card
-        class="card bg1 h-40 lg:h-80 lg:mx-2 my-2 w-full lg:w-1/3 cursor-pointer"
+
+    <swiper
+      :slidesPerView="swiperNum"
+      :spaceBetween="30"
+      :pagination="{
+        el: '.swiper-pagination',
+        clickable: true,
+      }"
+      :modules="[Pagination]"
+      class="mySwiper cardBox"
+    >
+      <swiper-slide
         v-for="item in ServiceStore.getServicelist"
         :key="item.id"
+        class="card"
       >
-        <q-card-section class="pb-12 flex lg:flex-col">
-          <q-img
-            class="h-36 w-1/2 lg:w-full block lg:hidden"
-            :src="
-              item.img ? item.img : 'https://cdn.quasar.dev/img/parallax2.jpg'
-            "
-          >
-            <div class="absolute-bottom text-h6">{{ item.name }}</div>
-          </q-img>
-          <div class="w-1/2 lg:w-full">
-            <p>
-              <q-icon name="attach_money" class="text-2xl p-2" />{{
-                item.price
-              }}
-            </p>
-            <p>
-              <q-icon name="face" class="text-2xl p-2" />{{
-                UserStore.getUserlist.filter(
-                  (uItem) => uItem.uid == item.server
-                )[0]?.name
-              }}
-            </p>
-            <p class="pl-3">{{ item.desc }}</p>
-            <p class="pl-3">目前預約人數:{{ item.attendent?.length || 0 }}</p>
-          </div>
-        </q-card-section>
-      </q-card>
-    </div>
+        <q-card class="bg1 h-64 lg:h-80 lg:mx-2 lg:my-2 w-full cursor-pointer">
+          <q-card-section class="pb-12 flex-col">
+            <q-img
+              class="h-24 lg:h-36 w-full block lg:hidden"
+              :src="
+                item.img ? item.img : 'https://cdn.quasar.dev/img/parallax2.jpg'
+              "
+            >
+              <div class="absolute-bottom lg:text-h6">{{ item.name }}</div>
+            </q-img>
+            <div class="w-full">
+              <p>
+                <q-icon name="attach_money" class="text-2xl p-2" />{{
+                  item.price
+                }}
+              </p>
+              <p>
+                <q-icon name="face" class="text-2xl p-2" />{{
+                  UserStore.getUserlist.filter(
+                    (uItem) => uItem.uid == item.server
+                  )[0]?.name
+                }}
+              </p>
+              <p class="pl-3">{{ item.desc }}</p>
+              <p class="pl-3">目前預約人數:{{ item.attendent?.length || 0 }}</p>
+            </div>
+          </q-card-section>
+        </q-card>
+      </swiper-slide>
+      <div class="swiper-pagination"></div>
+    </swiper>
   </section>
 
   <section class="w-full md:w-3/4 mx-auto px-6 p-10">
@@ -83,7 +116,7 @@ const StadiumStore = useStadiumStore();
     >
       服務人員/教練/老師
     </h2>
-    <div class="cardBox flex-wrap sm:flex-nowrap justify-around sm:justify-center">
+    <div class="cardBox flex-wrap justify-around sm:justify-center">
       <div
         class="card2 bg2 mx-1 sm:mx-2 my-2 w-1/3 rounded-md cursor-pointer"
         v-for="item in UserStore.getUserlist.filter((item) =>
@@ -113,38 +146,35 @@ const StadiumStore = useStadiumStore();
     >
       場館/場地/空間
     </h2>
-    <div class="cardBox flex-wrap lg:flex-nowrap justify-around sm:justify-center">
-      <q-card
-        class="card bg3 h-40 lg:h-80 lg:mx-2 my-2 w-full lg:w-1/3 cursor-pointer"
+    <div class="lg:flex flex-wrap flex-col lg:flex-row">
+      <div
+        class="h-42 lg:h-80 lg:mx-2 my-2 w-full lg:w-1/3 cursor-pointer relative"
         v-for="item in StadiumStore.getStadiumlist"
         :key="item.id"
       >
-        <q-card-section class="pb-12 flex lg:flex-col">
-          <q-img
-            class="h-36 w-1/2 lg:w-full block lg:hidden"
-            :src="
-              item.img ? item.img : 'https://cdn.quasar.dev/img/parallax2.jpg'
-            "
-          >
-            <div class="absolute-bottom text-h6">{{ item.name }}</div>
-          </q-img>
-          <div class="w-1/2 lg:w-full">
-            <p>
-              <q-icon name="home_filled" class="text-2xl p-2" />{{
-                item.address
-              }}
-            </p>
-            <p>
-              <q-icon name="access_time" class="text-2xl p-2" />{{
-                item.opneHour
-              }}
-            </p>
-            <p class="pl-3">{{ item.desc }}</p>
-            <p v-if=" item.rooms " class="pl-3">空間:{{ item.rooms }}</p>
-            <p class="pl-3">{{ item.desc }}</p>
-          </div>
-        </q-card-section>
-      </q-card>
+        <q-img
+          class="h-24 lg:h-36 w-1/3 lg:w-full block lg:hidden absolute right-1 top-3 lg:relative"
+          :src="
+            item.img ? item.img : 'https://cdn.quasar.dev/img/parallax2.jpg'
+          "
+        >
+        </q-img>
+        <div class="w-full">
+          <h3 class="font-bold">{{ item.name }}</h3>
+          <p v-if="item.address">
+            <q-icon name="home_filled" class="text-2xl p-2" />{{ item.address }}
+          </p>
+          <p>
+            <q-icon
+              v-if="item.opneHour"
+              name="access_time"
+              class="text-2xl p-2"
+            />{{ item.opneHour }}
+          </p>
+          <p v-if="item.rooms" class="pl-3">空間:{{ item.rooms }}</p>
+          <p v-if="item.desc" class="pl-3">{{ item.desc }}</p>
+        </div>
+      </div>
     </div>
   </section>
 </template>
@@ -152,6 +182,7 @@ const StadiumStore = useStadiumStore();
 <style lang="scss" scoped>
 .cardBox {
   display: flex;
+  font-size: 16px;
   .card {
     overflow: hidden;
     @media screen and (min-width: 1023px) {
@@ -162,14 +193,31 @@ const StadiumStore = useStadiumStore();
     overflow: hidden;
   }
   .bg1 {
-    background: $warning;
+    background: rgba(172, 208, 250, 0.2);
   }
 
   .bg2 {
     background: $info;
+    .absolute-bottom {
+      background: none;
+    }
   }
   .bg3 {
-    background: $secondary;
+    background: rgba(243, 229, 149, 0.2);
   }
+}
+
+.swiper {
+  width: 100%;
+  height: 100%;
+}
+
+.swiper-slide {
+  text-align: center;
+  background: #fff;
+  /* Center slide text vertically */
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 </style>

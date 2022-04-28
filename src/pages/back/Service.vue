@@ -123,9 +123,12 @@ const handleRowEdit = (row) => {
   dialogData.mode = "EDIT";
   dialogData.form = {
     ...row,
-    server:
-      UserStore.getUserlist.filter((item) => item.uid == row.server)[0]?.name ||
-      row.server,
+    server: {
+      label:
+        UserStore.getUserlist.filter((item) => item.uid == row.server)[0]
+          ?.name || row.server,
+      value: row.server,
+    },
     stadium:
       StadiumStore.getStadiumlist.filter((item) => item.id == row.stadium)[0]
         ?.name || "",
