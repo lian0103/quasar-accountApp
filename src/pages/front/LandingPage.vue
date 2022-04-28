@@ -115,7 +115,7 @@ onMounted(() => {
         :key="item.id"
         class="card"
       >
-        <q-card class="bg1 lg:mx-2 lg:my-2 w-full cursor-pointer">
+        <q-card class="bg1 lg:mx-2 lg:my-2 w-full">
           <q-card-section class="pb-12 flex-col">
             <q-img
               class="h-36 lg:h-36 w-full block lg:hidden"
@@ -181,14 +181,14 @@ onMounted(() => {
     </h2>
     <div class="cardBox flex-wrap justify-around sm:justify-center">
       <div
-        class="card2 bg2 mx-1 sm:mx-2 my-2 w-1/3 rounded-md cursor-pointer"
+        class="card2 bg2 mx-1 sm:mx-2 my-2 w-1/3 rounded-md"
         v-for="item in UserStore.getUserlist.filter((item) =>
           item.roles?.includes('server')
         )"
         :key="item.uid"
       >
         <q-img
-          class="h-36 w-full block"
+          class="h-48 w-full block"
           :src="
             item.avatar
               ? item.avatar
@@ -211,7 +211,7 @@ onMounted(() => {
     </h2>
     <div class="lg:flex flex-wrap flex-col lg:flex-row">
       <div
-        class="h-42 lg:h-80 lg:mx-2 my-2 w-full lg:w-1/3 cursor-pointer relative"
+        class="h-42 lg:h-80 lg:mx-2 my-2 w-full lg:w-1/3 relative"
         v-for="item in StadiumStore.getStadiumlist"
         :key="item.id"
       >
