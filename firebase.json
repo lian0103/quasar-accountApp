@@ -3,6 +3,7 @@
     "source": "functions"
   },
   "hosting": {
+    "site": "book-service",
     "public": "dist/spa",
     "ignore": [
       "firebase.json",
