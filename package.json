@@ -13,8 +13,10 @@
     "test": "echo \"No test specified\" && exit 0"
   },
   "dependencies": {
+    "@ckeditor/ckeditor5-build-decoupled-document": "^34.0.0",
     "@quasar/extras": "^1.0.0",
     "apexcharts": "^3.32.1",
+    "ckeditor5": "^34.0.0",
     "core-js": "^3.6.5",
     "firebase": "^9.6.2",
     "moment": "^2.29.3",

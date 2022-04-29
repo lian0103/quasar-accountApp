@@ -1,12 +1,14 @@
 <script setup>
-import { useUserStore, useRoleStore } from "../../stores/index";
-import { onMounted, ref, reactive } from "vue";
-import { createUser } from "../../firebase/auth";
-import { useQuasar } from "quasar";
-import { setUserInfo, updateUserInfo, deleteUser } from "../../firebase/user";
-import { parseFireStoreTimeStamp } from "../../utils";
-import { uploadFile } from "../../firebase/storage";
+import { useUserStore, useRoleStore } from '../../stores/index';
+import { onMounted, ref, reactive } from 'vue';
+import { createUser } from '../../firebase/auth';
+import { useQuasar } from 'quasar';
+import { setUserInfo, updateUserInfo, deleteUser } from '../../firebase/user';
+import { parseFireStoreTimeStamp } from '../../utils';
+import { uploadFile } from '../../firebase/storage';
+import Editor from '../../components/Editor.vue';
 
+var editor = null;
 const $q = useQuasar();
 const UserStore = useUserStore();
 const RoleStore = useRoleStore();
@@ -14,75 +16,82 @@ const loading = ref(false);
 const rows = ref([]);
 const dialogData = reactive({
   show: false,
-  mode: "ADD",
-  errMsg: "",
+  mode: 'ADD',
+  errMsg: '',
   form: {
-    name: "",
-    avatar: "",
-    password: "",
-    password2: "",
-    email: "",
+    name: '',
+    avatar: '',
+    password: '',
+    password2: '',
+    email: '',
     roles: [],
     file: null,
+    desc: '',
   },
 });
 const emailRule = /^([A-Za-z0-9_\-\.])+\@([A-Za-z0-9_\-\.])+\.([A-Za-z]{2,4})$/;
 
 const columns = [
   {
-    name: "uid",
-    label: "使用者id",
-    align: "left",
+    name: 'uid',
+    label: '使用者id',
+    align: 'left',
     field: (row) => row.uid,
   },
   {
-    name: "name",
-    label: "姓名",
-    align: "left",
+    name: 'name',
+    label: '姓名',
+    align: 'left',
     field: (row) => row.name,
   },
   {
-    name: "avatar",
-    label: "頭像",
-    align: "left",
+    name: 'avatar',
+    label: '頭像',
+    align: 'left',
     field: (row) => row.avatar,
   },
   {
-    name: "email",
-    label: "信箱",
-    align: "left",
+    name: 'email',
+    label: '信箱',
+    align: 'left',
     field: (row) => row.email,
   },
   {
-    name: "roles",
-    label: "角色id",
-    align: "left",
+    name: 'roles',
+    label: '角色id',
+    align: 'left',
     field: (row) => row.roles,
-    format: (arr) => arr?.join(","),
+    format: (arr) => arr?.join(','),
   },
   {
-    name: "time",
-    label: "新增/更新時間",
-    align: "left",
+    name: 'time',
+    label: '新增/更新時間',
+    align: 'left',
     sortable: true,
     field: (row) => parseFireStoreTimeStamp(row.updated || row.created),
   },
   {
-    name: "btns",
-    label: "操作",
-    align: "left",
+    name: 'desc',
+    label: '自訂內容',
+    align: 'left',
+    field: (row) => row.desc,
+  },
+  {
+    name: 'btns',
+    label: '操作',
+    align: 'left',
   },
 ];
 
 const handleRowAdd = () => {
   dialogData.show = true;
-  dialogData.mode = "ADD";
+  dialogData.mode = 'ADD';
 };
 
 const handleRowEdit = (row) => {
   // console.log(row);
   dialogData.show = true;
-  dialogData.mode = "EDIT";
+  dialogData.mode = 'EDIT';
   dialogData.form = {
     ...row,
   };
@@ -93,7 +102,7 @@ const handleAddEditForm = async () => {
   if (dialogData.form.file) {
     console.log(dialogData.form.file);
     let path = `uploaded/${dialogData.form.email}/avatar.${
-      dialogData.form.file.name.split(".")[1]
+      dialogData.form.file.name.split('.')[1]
     }`;
     // console.log("path", path);
     let uploadResUrl = await uploadFile(dialogData.form.file, path);
@@ -103,22 +112,23 @@ const handleAddEditForm = async () => {
   }
 
   switch (dialogData.mode) {
-    case "ADD": {
+    case 'ADD': {
       createUser(dialogData.form)
         .then((res) => {
           // console.log('created res', res.uid);
           let params = {
             ...dialogData.form,
             docId: res.uid,
+            desc: editor.getData(),
           };
           setUserInfo(params).then((res) => {
             dialogData.show = false;
-            dialogData.errMsg = "";
+            dialogData.errMsg = '';
             dialogData.form = {
-              name: "",
-              password: "",
-              password2: "",
-              email: "",
+              name: '',
+              password: '',
+              password2: '',
+              email: '',
               roles: [],
             };
           });
@@ -130,21 +140,22 @@ const handleAddEditForm = async () => {
 
       break;
     }
-    case "EDIT": {
+    case 'EDIT': {
       let params = {
         ...dialogData.form,
         roles: dialogData.form.roles.filter((item) => item),
+        desc: editor.getData(),
       };
-      console.log("params", params);
+      console.log('params', params);
 
       updateUserInfo(params).then((res) => {
         dialogData.show = false;
-        dialogData.errMsg = "";
+        dialogData.errMsg = '';
         dialogData.form = {
-          name: "",
-          password: "",
-          password2: "",
-          email: "",
+          name: '',
+          password: '',
+          password2: '',
+          email: '',
           roles: [],
         };
       });
@@ -156,7 +167,7 @@ const handleAddEditForm = async () => {
 const handleRowDelete = (row) => {
   // console.log(row);
   $q.dialog({
-    title: "DELETE",
+    title: 'DELETE',
     message: `刪除會員${row.name}?`,
     cancel: true,
   }).onOk(() => {
@@ -168,6 +179,11 @@ const handleRowDelete = (row) => {
 const getSelectedFile = (fileArr) => {
   // console.log(fileArr);
   dialogData.form.file = fileArr[0];
+};
+
+const getEditorInstance = (emitValue) => {
+  editor = emitValue;
+  // console.log('!!!',editor.getData())
 };
 
 onMounted(() => {
@@ -242,12 +258,17 @@ onMounted(() => {
             />
           </q-td>
         </template>
+        <template v-slot:body-cell-desc="props">
+          <q-td :props="props"
+            ><div class="descBox" v-html="props.row.desc"></div
+          ></q-td>
+        </template>
       </q-table>
       <q-dialog v-model="dialogData.show">
-        <q-card style="min-width: 350px">
+        <q-card style="min-width: 80vw">
           <q-card-section>
             <div class="text-h6">
-              {{ dialogData.mode === "ADD" ? "新增使用者" : "編輯使用者" }}
+              {{ dialogData.mode === 'ADD' ? '新增使用者' : '編輯使用者' }}
             </div>
           </q-card-section>
 
@@ -314,6 +335,14 @@ onMounted(() => {
                   columns.filter((cItem) => cItem.name == 'roles')[0].label
                 "
               />
+              <div>
+                <p>使用者自訂內容</p>
+                <Editor
+                  @editorInstance="getEditorInstance"
+                  :data="dialogData.form.desc"
+                />
+              </div>
+
               <p
                 v-if="dialogData.errMsg"
                 class="text-red-600 absolute left-0 bottom-0"
@@ -331,3 +360,11 @@ onMounted(() => {
     </div>
   </q-page>
 </template>
+
+<style lang="scss" scoped>
+.descBox {
+  max-width: 200px;
+  max-width: 100px;
+  overflow: hidden;
+}
+</style>
